@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block HTML_CONTENTS %}
+    <section class="bg-dark text-light py-4 mb-3">
+            <div class="container">
+                {% if USER_CONTEXT %}
+                    <a href="{{ url_for("schedule.entry_maker_form") }}" class="btn btn-outline-warning">ოპერაციის დამატება</a>
+                    <a href="{{ url_for("schedule.search_form") }}" class="btn btn-outline-info">ძებნა</a>
+                {% endif %}
+            </div>
+    </section>
+    <div class="container">
+        <div class="entry_listing">
+        {% for ENTRY in ENTRIES %}
+            <div class="card mb-1 {% if ENTRY.is_completed == 1 %}text-bg-success{% endif %}">
+                <a href='{{ url_for("schedule.entry_view", entry_id=ENTRY.entry_id) }}' class="stretched-link"></a>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ ENTRY.patient_name }}
+                    </h5>
+                    <span class="card-subtitle">
+                        {{ ENTRY.type_of_surgery }}
+                    </span>
+                    <div class="card-text">
+                        {{ ENTRY.diagnosis }}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    {{ ENTRY.scheduled_timestamp_str }}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block HEAD %}
+            <title>{{ WEBSITE_CONTEXT['title'] }}</title>
+        {% endblock %}
+        <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+
+        <script defer src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <nav class='navbar navbar-expand-sm navbar-dark bg-dark mb-3'>
+            <div class="container">
+                <a href="{{ url_for("schedule.index") }}" class="navbar-brand">{{ WEBSITE_CONTEXT['title'] }}</a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav-menu">
+                    <span class="span navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="nav-menu">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a href="{{ url_for("schedule.index") }}" class="nav-link">განრიგი</a>
+                        </li>
+                        {% if USER_CONTEXT %}
+                            <!--li class="nav-item">
+                                <a href="{{ url_for("schedule.entry_maker_form") }}" class="nav-link">ოპერაციის დამატება</a>
+                            </li-->
+                            <li class="nav-item">
+                                <a href="{{ url_for("administration.user_listing") }}" class="nav-link">ექიმების სია</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url_for("user_management.account_settings") }}" class="nav-link">ანგარიშის პარამეტრები</a>
+                            </li>
+                            {% if USER_CONTEXT.is_administrator == 2 %}
+                                <li class="nav-item">
+                                    <a href="{{ url_for("administration.admin") }}" class="nav-link">ადმინისტრაცია</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a href="{{ url_for("user_management.logout") }}" class="nav-link">გასვლა</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a href="{{ url_for("user_management.login_form") }}" class="nav-link">შესვლა</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <section>
+            {% block NOTICE_BLOCK %}
+                {% if NOTICE_MESSAGE %}
+                    <div class="container">
+                        <div class='alert {{ ALERT_TYPE }}'>
+                            {{ NOTICE_MESSAGE }}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+        </section>
+        <section>
+            {% block HTML_CONTENTS %}&nbsp;{% endblock %}
+        </section>
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="container">
+                <div class="d-flex align-items-center">
+                    <span class="mb-3 mb-md-0 text-muted">
+                        {% block FOOTER_CONTENTS %}
+                            {% if USER_CONTEXT %}
+                                სისტემაში შესული როგორც: {{ USER_CONTEXT.display_name }}
+                            {% endif %}
+                        {% endblock %}
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

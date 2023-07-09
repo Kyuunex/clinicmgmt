@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block HTML_CONTENTS %}
+    <div class="container">
+
+        <h1>ადმინისტრაცია</h1>
+        <a href="{{ url_for("administration.sql_form") }}" class="btn btn-primary my-1">SQL კონსოლი</a><br>
+        <a href="{{ url_for("administration.user_listing") }}" class="btn btn-primary my-1">დარეგისტრირებული მომხმარებლების სია</a>
+
+    </div>
+{% endblock %}

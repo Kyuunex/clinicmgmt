@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block HTML_CONTENTS %}
+    <div class="container">
+        <form action="{{ url_for("administration.sql_exec") }}" method="POST">
+            <div class="form-floating my-1">
+                <textarea rows="4" style="height:40%;" name="sql_query" type="text" id="sql_query" class="form-control" placeholder="SQL ბრძანება იწერება აქ" required></textarea>
+                <label for="sql_query">SQL ბრძანება იწერება აქ</label>
+            </div>
+
+            <div class="form-floating my-1">
+                <input type="submit" value="შესრულება" class="btn btn-primary" />
+            </div>
+        </form>
+
+        {% if SQL_RESULTS %}
+            <br>
+            <div class="form-floating">
+                <textarea rows="4" style="height:40%;" name="query_results" type="text" id="query_results" class="form-control" placeholder="query results" required>{{ SQL_RESULTS }}</textarea>
+                <label for="query_results">ბრძანების შედეგი</label>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

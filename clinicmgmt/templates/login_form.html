@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block HTML_CONTENTS %}
+    <div class="container">
+        <div class="alert alert-warning">
+            შესვლის და რეგისტრაციის ფუნქციას ესაჭიროება cookie ჩანაწერების გამოყენება.<br>
+            შესვლით ან დარეგისტრირებით თქვენ ეთანხმებით თქვენს ბრაუზერში cookie ჩანაწერების გამოყენებას.
+            <a href="{{ url_for("cookies") }}" class="alert-link">დამატებითი ინფორმაცია</a>
+        </div>
+
+        <form action='{{ url_for("user_management.login_attempt") }}' method='POST'>
+            <div class="form-floating my-1">
+                <input name='email' type="text" id="email" class="form-control" placeholder="enter your username here" required />
+                <label for="email">ელ.ფოსტა</label>
+            </div>
+            <div class="form-floating my-1">
+                <input name='password' type='password' id="password" class="form-control" placeholder="enter your password here" required />
+                <label for="password">პაროლი</label>
+            </div>
+            <div class="form-check my-3">
+                <input type='checkbox' name='remember_me' id="remember_me" value='1' class="form-check-input" />
+                <label for="remember_me" class="form-check-lable">დამიმახსოვრე</label>
+            </div>
+            <div class="form-floating my-1">
+                <input value='&#9919; შესვლა' type='submit' class="btn btn-primary" />
+            </div>
+        </form>
+        <div class="form-floating my-1">
+            {% if ALLOW_REGISTRATION %}
+                <a href='{{ url_for("user_management.registration_form") }}' class="btn btn-secondary">ანგარიშის რეგისტრაცია</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

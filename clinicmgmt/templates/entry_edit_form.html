@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block HTML_CONTENTS %}
+    <div class="container">
+        <h2>ოპერაციის რედაქტირება</h2>
+        <form action="{{ url_for("schedule.edit_entry", entry_id=ENTRY.entry_id) }}" method="post" enctype="multipart/form-data">
+
+            <div class="form-floating my-1">
+                <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="პაციენტის სახელი" value="{{ ENTRY.patient_name }}" required />
+                <label for="patient_name">პაციენტის სახელი და გვარი</label>
+            </div>
+            <div class="form-floating my-1">
+                <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="პაციენტის ტელეფონის ნომერი" value="{{ ENTRY.patient_phone_number }}" />
+                <label for="patient_phone_number">პაციენტის ტელეფონის ნომერი</label>
+            </div>
+            <div class="form-floating mt-1 mb-3">
+                <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="პაციენტის დაბადების წელი" value="{{ ENTRY.patient_birth_year }}" />
+                <label for="patient_birth_year">პაციენტის დაბადების წელი</label>
+            </div>
+            <div class="form-floating my-1">
+                <input name="assigned_doctor_id" type="text" id="assigned_doctor_id" class="form-control" placeholder="მკურნალი ექიმი" value="{{ ENTRY.assigned_doctor_id }}" required />
+                <label for="assigned_doctor_id">მკურნალი ექიმი</label>
+            </div>
+            <div class="form-floating my-1">
+                <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="ოპერაციის თარიღი და დრო" value="{{ ENTRY.scheduled_timestamp_html }}" required />
+                <label for="timestamp">ოპერაციის თარიღი და დრო</label>
+            </div>
+            <div class="form-floating my-1">
+                <select class="form-select" name="has_consultation_happened" id="has_consultation_happened">
+                    <option value="1"{% if ENTRY.has_consultation_happened == 1 %} selected{% endif %}>დიახ</option>
+                    <option value="0"{% if ENTRY.has_consultation_happened == 0 %} selected{% endif %}>არა</option>
+                </select>
+                <label for="is_completed">გაიარა პაციენტმა კონსულტაცია</label>
+            </div>
+            <div class="form-floating my-1">
+                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="ოპერაციის ტიპი" value="{{ ENTRY.type_of_surgery }}" required />
+                <label for="type_of_surgery">ოპერაციის ტიპი</label>
+            </div>
+            <div class="form-floating my-1">
+                <textarea rows="4" style="height:40%;" name="diagnosis" type="text" id="diagnosis" class="form-control" placeholder="დიაგნოზი" required >{{ ENTRY.diagnosis }}</textarea>
+                <label for="diagnosis">დიაგნოზი</label>
+            </div>
+
+            <div class="form-floating my-1">
+                <select class="form-select" name="is_completed" id="is_completed">
+                    <option value="1"{% if ENTRY.is_completed == 1 %} selected{% endif %}>დიახ</option>
+                    <option value="0"{% if ENTRY.is_completed == 0 %} selected{% endif %}>არა</option>
+                </select>
+                <label for="is_completed">შესრულებული</label>
+            </div>
+
+            <div class="form-floating my-1">
+                <input type="submit" value="&#9998; განახლება" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+{% endblock %}
