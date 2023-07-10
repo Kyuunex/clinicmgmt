@@ -3,7 +3,7 @@
 {% block HTML_CONTENTS %}
     <div class="container">
         <h1>ანგარიშის მართვა</h1>
-        <a href="#" class="btn btn-danger my-1">პაროლის შეცვლა</a><br>
+        <a href="{{ url_for("user_management.change_password_form") }}" class="btn btn-danger my-1">პაროლის შეცვლა</a><br>
         <a href="{{ url_for("user_management.session_listing_page") }}" class="btn btn-primary my-1">სესიების მართვა</a><br>
     </div>
 {% endblock %}

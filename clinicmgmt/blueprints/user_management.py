@@ -223,3 +223,21 @@ def destroy_session_token():
     db_cursor.execute("DELETE FROM session_tokens WHERE token_id = ?", [token_id])
     db_connection.commit()
     return resp
+
+
+@user_management.route('/change_password_form')
+def change_password_form():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    return render_template("password_change_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+
+
+@user_management.route('/change_password_attempt', methods=['POST'])
+def change_password_attempt():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    return "სადემონსტრაციო ვერსიაში არ არის ეს ფუნქცია"
