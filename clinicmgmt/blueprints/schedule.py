@@ -23,28 +23,17 @@ def index():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    entry_db_lookup = db_cursor.execute("SELECT id, author_id, "
-                                        "last_edit_author_id, "
-                                        "assigned_doctor_id, "
-                                        "patient_name, scheduled_timestamp, "
-                                        "added_timestamp, "
-                                        "last_edited_timestamp, "
-                                        "type_of_surgery, diagnosis, "
-                                        "patient_birth_year, "
-                                        "patient_phone_number, "
-                                        "has_consultation_happened, "
-                                        "is_completed "
-                                        "FROM patient_entries "
-                                        "ORDER BY scheduled_timestamp ASC")
+    entry_db_lookup = tuple(db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, "
+                                              "patient_name, scheduled_timestamp, added_timestamp, "
+                                              "last_edited_timestamp, type_of_surgery, diagnosis, patient_birth_year, "
+                                              "patient_phone_number, has_consultation_happened, is_completed "
+                                              "FROM patient_entries ORDER BY scheduled_timestamp ASC"))
 
     entries = []
-    for entry in tuple(entry_db_lookup):
+    for entry in entry_db_lookup:
         current_entry = Entry(entry)
-        current_entry_author = tuple(
-            db_cursor.execute("SELECT id, email, display_name, "
-                              "is_administrator, is_approver "
-                              "FROM users WHERE id = ?",
-                              [current_entry.author_id]))
+        current_entry_author = tuple(db_cursor.execute("SELECT id, email, display_name, is_administrator, is_approver "
+                                                       "FROM users WHERE id = ?", [current_entry.author_id]))
         if current_entry_author:
             current_entry.author = EntryAuthor(current_entry_author[0])
         else:

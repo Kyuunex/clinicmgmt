@@ -121,7 +121,7 @@ def registration_attempt():
             if is_anyone_registered:
                 return "დასარეგისტრირებლად გთხოვთ მიმართოთ ადმინისტრატორს."
 
-        display_name = request.form['display_name']  # სახელი და გვარი
+        display_name = request.form['display_name']
 
         password = request.form['password']
         repeat_password = request.form['repeat_password']
@@ -131,8 +131,7 @@ def registration_attempt():
 
         password_salt = get_random_string(32)
 
-        salted_encoded_password = (password + password_salt).encode()
-        hashed_password = hashlib.sha256(salted_encoded_password).hexdigest()
+        hashed_password = hashlib.sha256((password + password_salt).encode()).hexdigest()
 
         if not is_anyone_registered:
             is_administrator = 1
@@ -141,29 +140,22 @@ def registration_attempt():
             is_administrator = 0
             is_approver = 0
 
-        email_already_taken = db_cursor.execute("SELECT id FROM users "
-                                                "WHERE email = ? "
-                                                "COLLATE NOCASE",
-                                                [email.strip().lower()])
+        email_already_taken = tuple(db_cursor.execute("SELECT id FROM users WHERE email = ? COLLATE NOCASE",
+                                                      [email.strip().lower()]))
 
-        if tuple(email_already_taken):
-            return "ამ ელ.ფოსტით უკვე არის დარეგისტრირებული მომხმარებელი. " \
-                   "თუ ვერ შედიხართ, მიმართეთ ადმინისტრატორს."
+        if email_already_taken:
+            return "ამ ელ.ფოსტით უკვე არის დარეგისტრირებული მომხმარებელი. თუ ვერ შედიხართ, მიმართეთ ადმინისტრატორს."
 
         user_id = uuid.uuid4()
 
-        db_cursor.execute("INSERT INTO users (id, email, display_name, "
-                          "is_administrator, is_approver) "
-                          "VALUES (?, ?, ?, ?, ?)",
-                          [str(user_id), str(email.strip().lower()),
-                           str(display_name.strip()),
+        db_cursor.execute("INSERT INTO users "
+                          "(id, email, display_name, is_administrator, is_approver) VALUES (?, ?, ?, ?, ?)",
+                          [str(user_id), str(email.strip().lower()), str(display_name.strip()),
                            int(is_administrator), int(is_approver)])
         db_connection.commit()
 
-        db_cursor.execute("INSERT INTO user_passwords (user_id, password_hash, "
-                          "password_salt) VALUES (?, ?, ?)",
-                          [str(user_id), str(hashed_password),
-                           str(password_salt)])
+        db_cursor.execute("INSERT INTO user_passwords (user_id, password_hash, password_salt) VALUES (?, ?, ?)",
+                          [str(user_id), str(hashed_password), str(password_salt)])
         db_connection.commit()
 
         new_session_token = get_random_string(32)
@@ -173,13 +165,9 @@ def registration_attempt():
         expiry_timestamp = int(time.time()) + 34560000
         hashed_token = hashlib.sha256(new_session_token.encode()).hexdigest()
         client_ip_address_is_ipv6, client_ip_address_int = ip_decode(request)
-        db_cursor.execute("INSERT INTO session_tokens VALUES (?, ?, ?, ?, "
-                          "?, ?, ?, ?)",
-                          [str(user_id), str(token_id), hashed_token,
-                           int(time.time()), expiry_timestamp,
-                           str(request.user_agent.string),
-                           int(client_ip_address_int),
-                           int(client_ip_address_is_ipv6)])
+        db_cursor.execute("INSERT INTO session_tokens VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                          [str(user_id), str(token_id), hashed_token, int(time.time()), expiry_timestamp,
+                           str(request.user_agent.string), int(client_ip_address_int), int(client_ip_address_is_ipv6)])
         db_connection.commit()
         delete_invite(invite_code, email.strip().lower())
 
