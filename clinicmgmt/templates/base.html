@@ -33,7 +33,7 @@
                             <li class="nav-item">
                                 <a href="{{ url_for("user_management.account_settings") }}" class="nav-link">ანგარიშის პარამეტრები</a>
                             </li>
-                            {% if USER_CONTEXT.is_administrator == 2 %}
+                            {% if USER_CONTEXT.is_administrator == 1 %}
                                 <li class="nav-item">
                                     <a href="{{ url_for("administration.admin") }}" class="nav-link">ადმინისტრაცია</a>
                                 </li>
