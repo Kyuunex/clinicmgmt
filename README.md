@@ -1,10 +1,20 @@
 # clinicmgmt
-clinicmgmt is an internal clinic management software, made in Flask.
+Internal clinic management web-portal, made in Flask.
+კლინიკის მენჯმენტის ვებ-პორტალი
 
-### installation
-just install this as a pip package  
-`python3 -m pip install . --upgrade`  
-then make an apache conf that looks something like this
+# Demo version
+This version of this software is for demonstration purposes only to prevent someone else profiting off my work.
+Some parts of the code are omitted for this reason.
+Using this version of the software is forbidden in a commercial setting.
+
+# სადემონსტრაციო ვერსია
+ეს არის სადემონსტრაციო ვერსია, სხვამ რომ არ მიიღოს პროფიტი ჩემს ნამუშევრისგან.
+ამ მიზეზით, კოდის ზოგი ნაწილი ამოღებულია ამ ვერსიიდან.
+ამ პროგრამის ამ ვერსიის გამოყენება კომერციულ ადგილას დაუშვებელია.
+
+### Installation for prod
+Install this as a pip package with this command `python3 -m pip install . --upgrade`.
+Then make an apache conf that looks something like this
 ```bash
 <IfModule mod_ssl.c>
     <VirtualHost *:443>
@@ -24,7 +34,7 @@ then make an apache conf that looks something like this
     </VirtualHost>
 </IfModule>
 ```
-and make a wsgi file that looks something like this
+And make a wsgi file that looks something like this
 ```python
 #!/usr/bin/env python3
 
