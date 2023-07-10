@@ -13,6 +13,8 @@ from clinicmgmt.reusables.context import db_connection
 from clinicmgmt.reusables.context import website_context
 from clinicmgmt.reusables.user_validation import get_user_context
 from clinicmgmt.reusables.user_validation import validate_user_credentials
+from clinicmgmt.reusables.user_validation import validate_invite
+from clinicmgmt.reusables.user_validation import delete_invite
 
 user_management = Blueprint("user_management", __name__)
 
@@ -102,14 +104,6 @@ def login_attempt():
                            int(client_ip_address_int), int(client_ip_address_is_ipv6)])
         db_connection.commit()
         return resp
-
-
-def validate_invite(code, email):
-    return True
-
-
-def delete_invite(code, email):
-    return True
 
 
 @user_management.route('/registration_attempt', methods=['POST'])

@@ -66,3 +66,15 @@ def get_user_context():
             if user_context_list:
                 return CurrentUser(user_context_list[0])
     return None
+
+
+def validate_invite(code, email):
+    # this is a demo version of the software to prevent someone profiting off my work
+    # demo version omits this code
+    return True
+
+
+def delete_invite(code, email):
+    # this is a demo version of the software to prevent someone profiting off my work
+    # demo version omits this code
+    return True
