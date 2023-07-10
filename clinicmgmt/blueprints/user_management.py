@@ -116,22 +116,16 @@ def delete_invite(code, email):
 def registration_attempt():
     if get_user_context():
         return redirect(url_for("schedule.index"))
-    # ჯერ ვამოწმებთ თუ მომხმარებელი უკვე შესულია სისტემაში
 
     if request.method == 'POST':
         invite_code = request.form['invite_code']
         email = request.form['email']
-        # შემდეგ ვიღებთ მოწვევის კოდს და მაილს
 
         is_anyone_registered = tuple(db_cursor.execute("SELECT id FROM users"))
 
         if not validate_invite(invite_code, email.strip().lower()):
             if is_anyone_registered:
                 return "დასარეგისტრირებლად გთხოვთ მიმართოთ ადმინისტრატორს."
-        # მერე ვამოწმებთ ვინმე თუ არის დარეგისტრირებული,
-        # რადგან პირველი რეგისტრირდება ადმინისტრატორი
-        # თუ არის ადმინისტრატორი რეგისტრირებული უკვე,
-        # მაშინ ვამოწმებთ მოწვევის კოდის
 
         display_name = request.form['display_name']  # სახელი და გვარი
 
@@ -140,14 +134,11 @@ def registration_attempt():
 
         if not password == repeat_password:
             return "პაროლები არ ემთხვევა, ცადეთ რეგისტრაცია ახლიდან."
-        # გამეორებითი პაროლი ორივე უნდა ემთხვეოდეს
 
         password_salt = get_random_string(32)
-        # ვაგენერირებთ პაროლის მარილს
 
         salted_encoded_password = (password + password_salt).encode()
         hashed_password = hashlib.sha256(salted_encoded_password).hexdigest()
-        # ვამარილებთ პაროლს და ჰეშირების ფუნქციაში ვატარებთ
 
         if not is_anyone_registered:
             is_administrator = 1
@@ -155,7 +146,6 @@ def registration_attempt():
         else:
             is_administrator = 0
             is_approver = 0
-        # აქ ასევე ვწყვეტთ თუ რეგისტრირდება ადმინისტრატორი, რომ უფლებები გავცეთ
 
         email_already_taken = db_cursor.execute("SELECT id FROM users "
                                                 "WHERE email = ? "
@@ -165,11 +155,8 @@ def registration_attempt():
         if tuple(email_already_taken):
             return "ამ ელ.ფოსტით უკვე არის დარეგისტრირებული მომხმარებელი. " \
                    "თუ ვერ შედიხართ, მიმართეთ ადმინისტრატორს."
-        # მიზეზი არ არსებობს ერთი და იგივე ფოსტით იყოს 2 მომხმარებელი ან მეტი
-
 
         user_id = uuid.uuid4()
-        # ვაგენერირებთ უნიკალური UUID-ს მომხმარებლისთვის
 
         db_cursor.execute("INSERT INTO users (id, email, display_name, "
                           "is_administrator, is_approver) "
@@ -184,9 +171,6 @@ def registration_attempt():
                           [str(user_id), str(hashed_password),
                            str(password_salt)])
         db_connection.commit()
-        # ბაზაში ყველაფერი მატდება
-        # ამ ეტაპზე რეგისტრაცია დასრულდა, მაგრამ უცნაური იქნება
-        # რომ მომხმარებელს მოვთხოვოთ შესვლა ეგრევე, ამიტომ ვქმნით სესიას ქვემოთ
 
         new_session_token = get_random_string(32)
         resp = make_response(redirect(url_for("schedule.index")))
@@ -204,7 +188,6 @@ def registration_attempt():
                            int(client_ip_address_is_ipv6)])
         db_connection.commit()
         delete_invite(invite_code, email.strip().lower())
-        # და ბოლოს მოწვევის კოდს ვაუქმებთ
 
         return resp
 
