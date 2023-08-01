@@ -2,9 +2,9 @@
 
 {% block HTML_CONTENTS %}
     {% if USER_CONTEXT.is_administrator == 1 %}
-        <section class="bg-dark text-light py-4 mb-3">
+        <section class="bg-dark text-light py-3 mb-2">
             <div class="container">
-                <a href="#" class="btn btn-outline-warning">მომხმარებლის მოწვევა</a>
+                <a href="{{ url_for("user_management.memeber_invite_form") }}" class="btn btn-warning">მომხმარებლის მოწვევა</a>
             </div>
         </section>
     {% endif %}
@@ -20,11 +20,15 @@
                     <strong class="card-text">ადმინისტრატორი</strong>
                 {% endif %}
                 <a href="{{ url_for("schedule.index", author_id=info[0]) }}" class="btn btn-primary mt-2">ოპერაციების ნახვა</a>
-                <a href="#" class="btn btn-danger mt-2">გაუქმება</a>
+                {% if USER_CONTEXT.is_administrator == 1 %}
+                    <a href="#demo-version" class="btn btn-danger mt-2">გაუქმება</a>
+                {% endif %}
             </div>
-            <div class="card-footer">
-                UUID: {{ info[0] }}
-            </div>
+            {% if USER_CONTEXT.is_administrator == 2 %}
+                <div class="card-footer">
+                    UUID: {{ info[0] }}
+                </div>
+            {% endif %}
         </div>
     {% endfor %}
     </div>

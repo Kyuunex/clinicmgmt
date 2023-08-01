@@ -10,7 +10,7 @@
         <meta name=viewport content="width=device-width, initial-scale=1">
     </head>
     <body>
-        <nav class='navbar navbar-expand-sm navbar-dark bg-dark mb-3'>
+        <nav class='navbar navbar-expand-sm navbar-dark bg-dark mb-2'>
             <div class="container">
                 <a href="{{ url_for("schedule.index") }}" class="navbar-brand">{{ WEBSITE_CONTEXT['title'] }}</a>
 
@@ -64,7 +64,7 @@
         <section>
             {% block HTML_CONTENTS %}&nbsp;{% endblock %}
         </section>
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-2 my-4 border-top">
             <div class="container">
                 <div class="d-flex align-items-center">
                     <span class="mb-3 mb-md-0 text-muted">

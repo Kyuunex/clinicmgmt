@@ -40,14 +40,14 @@
         </p>
     </div>
 
-    <section class="bg-dark text-light py-4">
+    <section class="bg-dark text-light py-2">
         <div class="container">
         <h4>თანხმობები</h4>
             {% if USER_CONTEXT.is_approver == 1 %}
                 {% if ENTRY.current_user_has_approved == 1 %}
-                    <a href='{{ url_for("schedule.mark_entry_disapproved", entry_id=ENTRY.entry_id) }}' class="btn btn-warning mb-2">თანხმობის გაუქმება</a>
+                    <a href='{{ url_for("schedule.mark_entry_disapproved", entry_id=ENTRY.entry_id) }}' class="btn btn-warning mb-1">თანხმობის გაუქმება</a>
                 {% else %}
-                    <a href='{{ url_for("schedule.mark_entry_approved", entry_id=ENTRY.entry_id) }}' class="btn btn-primary mb-2">თანხმობის გაცემა</a>
+                    <a href='{{ url_for("schedule.mark_entry_approved", entry_id=ENTRY.entry_id) }}' class="btn btn-primary mb-1">თანხმობის გაცემა</a>
                 {% endif %}
             {% endif %}
 
@@ -59,7 +59,7 @@
         </div>
     </section>
 
-    <section class="bg-light text-dark py-4">
+    <section class="bg-light text-dark py-2">
         <div class="container">
             {% if ENTRY.is_completed == 1 %}
                 <a href='{{ url_for("schedule.mark_entry_incomplete", entry_id=ENTRY.entry_id) }}' class="btn btn-warning">შეუსრულებლად მონიშვნა</a>

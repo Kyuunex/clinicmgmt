@@ -4,33 +4,36 @@
     <div class="container">
         <h2>ოპერაციის დამატება</h2>
         <form action="{{ url_for("schedule.make_entry") }}" method="post" enctype="multipart/form-data">
-
-            <div class="form-floating my-1">
-                <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="პაციენტის სახელი" required />
-                <label for="patient_name">პაციენტის სახელი და გვარი</label>
+            <div class="input-group">
+                <div class="form-floating my-1">
+                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="პაციენტის სახელი" required />
+                    <label for="patient_name">პაციენტის სახელი/გვარი</label>
+                </div>
+                <div class="form-floating mt-1">
+                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="პაციენტის დაბადების წელი" />
+                    <label for="patient_birth_year">პაციენტის დაბ. წელი</label>
+                </div>
             </div>
-            <div class="form-floating my-1">
-                <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="პაციენტის ტელეფონის ნომერი" />
-                <label for="patient_phone_number">პაციენტის ტელეფონის ნომერი</label>
-            </div>
-            <div class="form-floating mt-1 mb-3">
-                <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="პაციენტის დაბადების წელი" />
-                <label for="patient_birth_year">პაციენტის დაბადების წელი</label>
+            <div class="input-group">
+                <div class="form-floating my-1">
+                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="ოპერაციის თარიღი და დრო" required />
+                    <label for="timestamp">ოპერაციის თარიღი/დრო</label>
+                </div>
+                <div class="form-floating my-1">
+                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="პაციენტის ტელეფონის ნომერი" />
+                    <label for="patient_phone_number">პაციენტის ტელ. ნომერი</label>
+                </div>
             </div>
             <div class="form-floating my-1">
                 <input name="assigned_doctor_id" type="text" id="assigned_doctor_id" class="form-control" placeholder="მკურნალი ექიმი" required />
                 <label for="assigned_doctor_id">მკურნალი ექიმი</label>
             </div>
             <div class="form-floating my-1">
-                <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="ოპერაციის თარიღი და დრო" required />
-                <label for="timestamp">ოპერაციის თარიღი და დრო</label>
-            </div>
-            <div class="form-floating my-1">
                 <select class="form-select" name="has_consultation_happened" id="has_consultation_happened">
                     <option value="1">დიახ</option>
                     <option value="0" selected>არა</option>
                 </select>
-                <label for="is_completed">გაიარა პაციენტმა კონსულტაცია</label>
+                <label for="is_completed">გაიარა კონსულტაცია</label>
             </div>
             <div class="form-floating my-1">
                 <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="ოპერაციის ტიპი" value="საკეისრო" required />
