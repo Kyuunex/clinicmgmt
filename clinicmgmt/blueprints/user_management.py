@@ -243,9 +243,8 @@ def change_password_attempt():
     return "სადემონსტრაციო ვერსიაში არ არის ეს ფუნქცია"
 
 
-
-@user_management.route('/memeber_invite_form')
-def memeber_invite_form():
+@user_management.route('/member_invite_form')
+def member_invite_form():
     user_context = get_user_context()
     if not user_context:
         return redirect(url_for("user_management.login_form"))
@@ -253,8 +252,8 @@ def memeber_invite_form():
     return render_template("member_invite_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
 
 
-@user_management.route('/memeber_invite_generate', methods=['POST'])
-def memeber_invite_generate():
+@user_management.route('/member_invite_generate', methods=['POST'])
+def member_invite_generate():
     user_context = get_user_context()
     if not user_context:
         return redirect(url_for("user_management.login_form"))
