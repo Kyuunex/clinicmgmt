@@ -11,11 +11,11 @@
         <p>
             მოსაძებნად შეავსეთ მინიმუმ 1 ველი.
         </p>
-        <form action="{{ url_for("schedule.index") }}" method="post" enctype="multipart/form-data">
+        <form action="{{ url_for("schedule.search") }}" method="post" enctype="multipart/form-data">
 
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="პაციენტის სახელი" required />
+                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="პაციენტის სახელი" />
                     <label for="patient_name">პაციენტის სახელი/გვარი</label>
                 </div>
                 <div class="form-floating mt-1">
@@ -25,7 +25,7 @@
             </div>
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="timestamp" type="date" id="timestamp" class="form-control" placeholder="ოპერაციის თარიღი და დრო" required />
+                    <input name="timestamp" type="date" id="timestamp" class="form-control" placeholder="ოპერაციის თარიღი და დრო" />
                     <label for="timestamp">ოპერაციის თარიღი</label>
                 </div>
                 <div class="form-floating my-1">
@@ -39,13 +39,14 @@
             </div>
             <div class="form-floating my-1">
                 <select class="form-select" name="has_consultation_happened" id="has_consultation_happened">
+                    <option value="" selected>დიახ/არა</option>
                     <option value="1">დიახ</option>
-                    <option value="0" selected>არა</option>
+                    <option value="0">არა</option>
                 </select>
                 <label for="is_completed">გაიარა კონსულტაცია</label>
             </div>
             <div class="form-floating my-1">
-                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="ოპერაციის ტიპი" value="საკეისრო" required />
+                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="ოპერაციის ტიპი" />
                 <label for="type_of_surgery">ოპერაციის ტიპი</label>
             </div>
             <div class="form-floating my-1">
