@@ -25,7 +25,7 @@
 
         <p>ოპერაციის დრო: {{ ENTRY.scheduled_timestamp_str }}</p>
 
-        <p>მკურნალი ექიმი: {{ ENTRY.assigned_doctor_id }}</p>
+        <p>მკურნალი ექიმი: {{ ENTRY.assigned_doctor_name }}</p>
 
         {% if ENTRY.has_consultation_happened == 1 %}
             <p>კონსულტაცია ჩატარდა</p>
