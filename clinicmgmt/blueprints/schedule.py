@@ -67,7 +67,8 @@ def make_entry():
 
     if request.method == 'POST':
         patient_name = request.form['patient_name']
-        assigned_doctor_id = request.form['assigned_doctor_id']
+        assigned_doctor_id = None
+        assigned_doctor_name = request.form['assigned_doctor_name']
         html_timestamp = request.form['timestamp']
         type_of_surgery = request.form['type_of_surgery']
         diagnosis = request.form['diagnosis']
@@ -86,14 +87,14 @@ def make_entry():
         entry_id = uuid.uuid4()
 
         db_cursor.execute("INSERT INTO patient_entries "
-                          "(id, author_id, last_edit_author_id, assigned_doctor_id, patient_name, scheduled_timestamp, "
-                          "added_timestamp, last_edited_timestamp, type_of_surgery, diagnosis, patient_birth_year, "
-                          "patient_phone_number, has_consultation_happened, is_completed) "
-                          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                          [str(entry_id), user_context.id, user_context.id, assigned_doctor_id, patient_name,
-                           int(scheduled_timestamp),
-                           int(time.time()), int(time.time()), type_of_surgery, diagnosis, int(patient_birth_year),
-                           patient_phone_number, int(has_consultation_happened), 0])
+                          "(id, author_id, last_edit_author_id, assigned_doctor_id, assigned_doctor_name, "
+                          "patient_name, scheduled_timestamp, added_timestamp, last_edited_timestamp, "
+                          "type_of_surgery, diagnosis, patient_birth_year, patient_phone_number, "
+                          "has_consultation_happened, is_completed) "
+                          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                          [str(entry_id), user_context.id, user_context.id, assigned_doctor_id, assigned_doctor_name,
+                           patient_name, int(scheduled_timestamp), int(time.time()), int(time.time()), type_of_surgery,
+                           diagnosis, int(patient_birth_year), patient_phone_number, int(has_consultation_happened), 0])
         db_connection.commit()
 
         resp = make_response(redirect(url_for("schedule.entry_view", entry_id=entry_id)))
@@ -108,10 +109,10 @@ def entry_view(entry_id):
         return redirect(url_for("user_management.login_form"))
 
     entry_db_lookup = tuple(
-        db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, patient_name, "
-                          "scheduled_timestamp, added_timestamp, last_edited_timestamp, type_of_surgery, diagnosis, "
-                          "patient_birth_year, patient_phone_number, has_consultation_happened, is_completed "
-                          "FROM patient_entries WHERE id = ? ", [entry_id]))
+        db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, assigned_doctor_name, "
+                          "patient_name, scheduled_timestamp, added_timestamp, last_edited_timestamp, type_of_surgery, "
+                          "diagnosis, patient_birth_year, patient_phone_number, has_consultation_happened, "
+                          "is_completed FROM patient_entries WHERE id = ? ", [entry_id]))
     if not entry_db_lookup:
         return "ჩანაწერი ვერ მოიძებნა. შეიძლება ადრე იყო და მერე წაშალა ვინმემ."
 
@@ -168,10 +169,10 @@ def entry_edit_form(entry_id):
         return redirect(url_for("user_management.login_form"))
 
     entry_db_lookup = tuple(
-        db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, patient_name, "
-                          "scheduled_timestamp, added_timestamp, last_edited_timestamp, type_of_surgery, diagnosis, "
-                          "patient_birth_year, patient_phone_number, has_consultation_happened, is_completed "
-                          "FROM patient_entries WHERE id = ?", [entry_id]))
+        db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, assigned_doctor_name, "
+                          "patient_name, scheduled_timestamp, added_timestamp, last_edited_timestamp, type_of_surgery, "
+                          "diagnosis, patient_birth_year, patient_phone_number, has_consultation_happened, "
+                          "is_completed FROM patient_entries WHERE id = ?", [entry_id]))
 
     if not entry_db_lookup:
         return "ჩანაწერი ვერ მოიძებნა. შეიძლება ადრე იყო და მერე წაშალა ვინმემ."
@@ -205,7 +206,8 @@ def edit_entry(entry_id):
 
     if request.method == 'POST':
         patient_name = request.form['patient_name']
-        assigned_doctor_id = request.form['assigned_doctor_id']
+        assigned_doctor_id = None
+        assigned_doctor_name = request.form['assigned_doctor_name']
         timestamp = request.form['timestamp']
         type_of_surgery = request.form['type_of_surgery']
         diagnosis = request.form['diagnosis']
@@ -223,11 +225,11 @@ def edit_entry(entry_id):
         scheduled_timestamp = int(scheduled_timestamp_input_datetime.timestamp())
 
         db_cursor.execute("UPDATE patient_entries "
-                          "SET last_edit_author_id = ?, assigned_doctor_id = ?, patient_name = ?, "
-                          "scheduled_timestamp = ?, last_edited_timestamp = ?, type_of_surgery = ?, "
+                          "SET last_edit_author_id = ?, assigned_doctor_id = ?, assigned_doctor_name = ?, "
+                          "patient_name = ?, scheduled_timestamp = ?, last_edited_timestamp = ?, type_of_surgery = ?, "
                           "diagnosis = ?, patient_birth_year = ?, patient_phone_number = ?, "
                           "has_consultation_happened = ?, is_completed = ? WHERE id = ?",
-                          [user_context.id, assigned_doctor_id, patient_name,
+                          [user_context.id, assigned_doctor_id, assigned_doctor_name, patient_name,
                            scheduled_timestamp, int(time.time()), type_of_surgery,
                            diagnosis, int(patient_birth_year), patient_phone_number,
                            has_consultation_happened, is_completed, entry_id])
