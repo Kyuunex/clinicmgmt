@@ -17,17 +17,35 @@ from clinicmgmt.classes.EntryDeletedAuthor import EntryDeletedAuthor
 schedule = Blueprint("schedule", __name__)
 
 
-@schedule.route('/', methods=['GET', 'POST'])
+@schedule.route('/', methods=['GET', 'POST'], endpoint="index")
+@schedule.route('/all', methods=['GET', 'POST'], endpoint="all")
+@schedule.route('/search', methods=['GET', 'POST'], endpoint="search")
 def index():
     user_context = get_user_context()
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    entry_db_lookup = tuple(db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, "
-                                              "patient_name, scheduled_timestamp, added_timestamp, "
-                                              "last_edited_timestamp, type_of_surgery, diagnosis, patient_birth_year, "
-                                              "patient_phone_number, has_consultation_happened, is_completed "
-                                              "FROM patient_entries ORDER BY scheduled_timestamp ASC"))
+    if request.endpoint == "schedule.search":
+        return "სადემონსტრაციო ვერსიაში არ არის ეს ფუნქცია"
+    elif request.endpoint == "schedule.all":
+        entry_db_lookup = tuple(db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, "
+                                                  "assigned_doctor_name, patient_name, scheduled_timestamp, "
+                                                  "added_timestamp, last_edited_timestamp, type_of_surgery, diagnosis, "
+                                                  "patient_birth_year, "
+                                                  "patient_phone_number, has_consultation_happened, is_completed "
+                                                  "FROM patient_entries ORDER BY scheduled_timestamp ASC"))
+    elif request.endpoint == "schedule.index":
+        entry_db_lookup = tuple(db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, "
+                                                  "assigned_doctor_name, patient_name, scheduled_timestamp, "
+                                                  "added_timestamp, last_edited_timestamp, type_of_surgery, diagnosis, "
+                                                  "patient_birth_year, "
+                                                  "patient_phone_number, has_consultation_happened, is_completed "
+                                                  "FROM patient_entries "
+                                                  "WHERE scheduled_timestamp < ? AND scheduled_timestamp > ? "
+                                                  "ORDER BY scheduled_timestamp ASC",
+                                                  [(time.time() + 86400), (time.time() - 86400)]))
+    else:
+        return
 
     entries = []
     for entry in entry_db_lookup:
