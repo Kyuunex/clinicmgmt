@@ -5,16 +5,19 @@
         <div class='alert alert-info'>
             სადემონსტრაციო ვერსიაში ეს ფუნქცია არ არის გაკეთებული.
         </div>
-
-        <h2>მომხმარებლის მოწვევა</h2>
-        <form action="{{ url_for("user_management.member_invite_generate") }}" method="POST">
-            <div class="form-floating my-1">
-                <input name="email" type="email" id="email" class="form-control" placeholder="email" required />
-                <label for="email">ელ-ფოსტა</label>
+        <div class="d-flex justify-content-center">
+            <div class="col-10 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4">
+                <h2>მომხმარებლის მოწვევა</h2>
+                <form action="{{ url_for("user_management.member_invite_generate") }}" method="POST">
+                    <div class="form-floating my-1">
+                        <input name="email" type="email" id="email" class="form-control" placeholder="email" required />
+                        <label for="email">ელ-ფოსტა</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        <input value="მოწვევის გენერირება" type="submit" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-floating my-1">
-                <input value="მოწვევის გენერირება" type="submit" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 {% endblock %}

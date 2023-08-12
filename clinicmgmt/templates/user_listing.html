@@ -8,31 +8,37 @@
             </div>
         </section>
     {% endif %}
+
     <div id="delete_confirm"></div>
+
     <div class="container">
-    <style>.card {display:inline-block;}</style>
-    {% for info in USER_LISTING %}
-        <div class="card mb-1" style="width: 15rem;">
-            <!--img class="card-img-top" src="{{ url_for('static', filename='default_pp.png') }}" alt="Card image cap"-->
-            <div class="card-body">
-                <h5 class="card-title">{{ info[2] }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ info[1] }}</h6>
-                {% if info[3] == 1 %}
-                    <strong class="card-text">ადმინისტრატორი</strong>
-                {% endif %}
-                <a href="{{ url_for("schedule.index", author_id=info[0]) }}" class="btn btn-primary mt-2">ოპერაციების ნახვა</a>
-                {% if USER_CONTEXT.is_administrator == 1 %}
-                    <a href="#demo-version" class="btn btn-danger mt-2" onClick="delete_warning()">გაუქმება</a>
-                {% endif %}
-            </div>
-            {% if USER_CONTEXT.is_administrator == 2 %}
-                <div class="card-footer">
-                    UUID: {{ info[0] }}
+        <div class="row">
+            {% for info in USER_LISTING %}
+                <div class="col-4 col-sm-4 col-md-4 col-lg-3 col-xl-2 col-xxl-2 mb-3">
+                    <div class="card">
+                        <!--img class="card-img-top" src="{{ url_for('static', filename='default_pp.png') }}" alt="Card image cap"-->
+                        <div class="card-body">
+                            <h5 class="card-title">{{ info[2] }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ info[1] }}</h6>
+                            {% if info[3] == 1 %}
+                                <strong class="card-text">ადმინისტრატორი</strong>
+                            {% endif %}
+                            <a href="{{ url_for("schedule.index", author_id=info[0]) }}" class="btn btn-primary mt-2">ოპერაციების ნახვა</a>
+                            {% if USER_CONTEXT.is_administrator == 1 %}
+                                <a href="#demo-version" class="btn btn-danger mt-2" onClick="delete_warning()">გაუქმება</a>
+                            {% endif %}
+                        </div>
+                        {% if USER_CONTEXT.is_administrator == 1 %}
+                            <div class="card-footer">
+                                UUID: {{ info[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-            {% endif %}
+            {% endfor %}
         </div>
-    {% endfor %}
     </div>
+
     <script type="text/javascript">
         function delete_warning() { // ...
             document.getElementById("delete_confirm").innerHTML = "" +
