@@ -328,3 +328,12 @@ def search_form():
         return redirect(url_for("user_management.login_form"))
 
     return render_template("search_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+
+
+@schedule.route('/calendar_form')
+def calendar_form():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    return render_template("calendar_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
