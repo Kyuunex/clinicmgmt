@@ -97,9 +97,7 @@ def make_entry():
         if not patient_birth_year.isdigit():
             return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
 
-        scheduled_timestamp_input_datetime = datetime.strptime(html_timestamp, "%Y-%m-%dT%H:%M") - timedelta(
-            seconds=website_context['timezone_offset']
-        )
+        scheduled_timestamp_input_datetime = datetime.strptime(html_timestamp + ":00" + website_context['timezone_str'], "%Y-%m-%dT%H:%M:%S%z")
         scheduled_timestamp = int(scheduled_timestamp_input_datetime.timestamp())
 
         entry_id = uuid.uuid4()
@@ -152,8 +150,7 @@ def entry_view(entry_id):
             self.display_name = str(user_context_list[2])
             self.approval_timestamp = timestamp
 
-            approval_timestamp_tmp = datetime.fromtimestamp(self.approval_timestamp) + timedelta(
-                seconds=website_context['timezone_offset'])
+            approval_timestamp_tmp = datetime.fromtimestamp(self.approval_timestamp, tz=website_context['timezone'])
             self.approval_timestamp_str = approval_timestamp_tmp.strftime("%Y-%m-%d %H:%M")
 
     entry_approvals_db = tuple(db_cursor.execute("SELECT approver_author_id, approval_timestamp "
@@ -237,9 +234,7 @@ def edit_entry(entry_id):
         if not patient_birth_year.isdigit():
             return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
 
-        scheduled_timestamp_input_datetime = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M") - timedelta(
-            seconds=website_context['timezone_offset']
-        )
+        scheduled_timestamp_input_datetime = datetime.strptime(timestamp + ":00" + website_context['timezone_str'], "%Y-%m-%dT%H:%M:%S%z")
         scheduled_timestamp = int(scheduled_timestamp_input_datetime.timestamp())
 
         db_cursor.execute("UPDATE patient_entries "

@@ -15,8 +15,8 @@
                     {{ SESSION[2] }}
                 </h5>
                 <p class="card-text">
-                    შესვლის დრო: {{ datetime.fromtimestamp(SESSION[1], timezone.utc) }},<br>
-                    ვადის გასვლის დრო: {{ datetime.fromtimestamp(SESSION[6], timezone.utc) }}
+                    შესვლის დრო: {{ datetime.fromtimestamp(SESSION[1], tz=WEBSITE_CONTEXT['timezone']) }},<br>
+                    ვადის გასვლის დრო: {{ datetime.fromtimestamp(SESSION[6], tz=WEBSITE_CONTEXT['timezone']) }}
                 </p>
                 <a href="{{ url_for("user_management.destroy_session_token", token_id=SESSION[5]) }}" class="btn btn-danger">ამ სესიის დასრულება</a>
             </div>

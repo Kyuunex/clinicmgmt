@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from datetime import timedelta, timezone
 
 if not os.environ.get('CLINICMGMT_SQLITE_FILE'):
     print("This app uses an sqlite3 database. "
@@ -92,12 +93,5 @@ if user_context_list:
 else:
     website_context["title"] = "გარნრიგი"
 
-
-timezone_offset_db = tuple(db_cursor.execute(
-    "SELECT value FROM app_configuration WHERE setting = ?", ["timezone_offset"])
-)
-
-if timezone_offset_db:
-    website_context["timezone_offset"] = int(user_context_list[0][0]) * 3600  # 4 hours in seconds
-else:
-    website_context["timezone_offset"] = 4 * 3600  # 4 hours in seconds
+website_context["timezone_str"] = "+04:00"
+website_context["timezone"] = timezone(timedelta(seconds=14400))
