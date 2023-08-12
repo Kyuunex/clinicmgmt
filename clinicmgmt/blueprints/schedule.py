@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime
-from datetime import timedelta
 import time
 
 from flask import Blueprint, request, make_response, redirect, url_for, render_template
