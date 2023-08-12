@@ -70,7 +70,7 @@
             <a href='{{ url_for("schedule.entry_edit_form", entry_id=ENTRY.entry_id) }}' class="btn btn-secondary">რედაქტირება</a>
             <a href='{{ url_for("schedule.delete_entry", entry_id=ENTRY.entry_id) }}' class="btn btn-danger">წაშლა</a>
             <p>
-                მონაცემების ავტორი: <a href='{{ url_for("schedule.index", author_id=ENTRY.author.id) }}' class="text-primary">
+                მონაცემების ავტორი: <a href='{{ url_for("schedule.search", author_id=ENTRY.author.id) }}' class="text-primary">
                 {{ ENTRY.author.display_name }}</a>
             </p>
             <p>მონაცემების შეტანის დრო: {{ ENTRY.added_timestamp_str }}</p>
