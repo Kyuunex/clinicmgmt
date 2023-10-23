@@ -2,6 +2,10 @@
 Internal clinic management web-portal, made in Flask.
 კლინიკის მენჯმენტის ვებ-პორტალი
 
+# Georgian only
+This software was written for a clinic in Georgia and is only in Georgian Language. 
+Multilingual update will come later.
+
 ### Installation for prod
 Install this as a pip package with this command `python3 -m pip install . --upgrade`.
 Then make an apache conf that looks something like this
