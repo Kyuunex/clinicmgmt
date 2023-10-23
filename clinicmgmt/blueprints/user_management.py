@@ -13,8 +13,10 @@ from clinicmgmt.reusables.context import db_connection
 from clinicmgmt.reusables.context import website_context
 from clinicmgmt.reusables.user_validation import get_user_context
 from clinicmgmt.reusables.user_validation import validate_user_credentials
-from clinicmgmt.reusables.user_validation import validate_invite
-from clinicmgmt.reusables.user_validation import delete_invite
+
+from clinicmgmt.classes.Invite import Invite
+from clinicmgmt.classes.InviteAuthor import InviteAuthor
+from clinicmgmt.classes.EntryDeletedAuthor import EntryDeletedAuthor
 
 user_management = Blueprint("user_management", __name__)
 
@@ -35,34 +37,34 @@ def login_form():
         return redirect(url_for("schedule.index"))
 
     is_anyone_registered = tuple(db_cursor.execute("SELECT id FROM users"))
-    is_registration_enabled = tuple(db_cursor.execute(
-        "SELECT value FROM app_configuration WHERE setting = ?", ["allow_registration"])
-    )
 
-    allow_registration = True
-    if not is_registration_enabled:
-        if is_anyone_registered:
-            allow_registration = False
-
-    return render_template("login_form.html", WEBSITE_CONTEXT=website_context, ALLOW_REGISTRATION=allow_registration)
+    return render_template("login_form.html", WEBSITE_CONTEXT=website_context,
+                           IS_ANYONE_REGISTERED=is_anyone_registered)
 
 
 @user_management.route('/registration_form')
 def registration_form():
     is_anyone_registered = tuple(db_cursor.execute("SELECT id FROM users"))
-    is_registration_enabled = tuple(db_cursor.execute(
-        "SELECT value FROM app_configuration WHERE setting = ?", ["allow_registration"])
-    )
+    invite_code = None
+    invite_db_query = None
 
-    if not is_registration_enabled:
-        if is_anyone_registered:
-            return "დასარეგისტრირებლად გთხოვთ მიმართოთ ადმინისტრატორს."
+    if is_anyone_registered:
+        invite_code = request.args.get('invite_code')
+        if invite_code:
+            invite_db_query = tuple(db_cursor.execute("SELECT invite_code FROM invite_codes "
+                                                      "WHERE invite_code = ? AND expiry_timestamp > ?",
+                                                      [invite_code, int(time.time())]))
+            if not invite_db_query:
+                return "მოწვევის კოდი არასწორია."
+
+        if not invite_db_query:
+            return "მოწვევის კოდი აუცილებელია დასარეგისტრირებლად. გთხოვთ მიმართოთ ადმინისტრატორს."
 
     user_context = get_user_context()
     if user_context:
         return redirect(url_for("schedule.index"))
 
-    return render_template("registration_form.html", WEBSITE_CONTEXT=website_context)
+    return render_template("registration_form.html", WEBSITE_CONTEXT=website_context, INVITE_CODE=invite_code)
 
 
 @user_management.route('/login_attempt', methods=['POST'])
@@ -112,12 +114,16 @@ def registration_attempt():
         return redirect(url_for("schedule.index"))
 
     if request.method == 'POST':
-        invite_code = request.form['invite_code']
+        invite_code = request.form.get('invite_code')
         email = request.form['email']
 
         is_anyone_registered = tuple(db_cursor.execute("SELECT id FROM users"))
 
-        if not validate_invite(invite_code, email.strip().lower()):
+        validate_invite = tuple(db_cursor.execute("SELECT invite_code FROM invite_codes "
+                                                  "WHERE invite_code = ? AND invitee_email = ? AND expiry_timestamp > ?",
+                                                  [invite_code, email.strip().lower(), int(time.time())]))
+
+        if not validate_invite:
             if is_anyone_registered:
                 return "დასარეგისტრირებლად გთხოვთ მიმართოთ ადმინისტრატორს."
 
@@ -168,8 +174,9 @@ def registration_attempt():
         db_cursor.execute("INSERT INTO session_tokens VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                           [str(user_id), str(token_id), hashed_token, int(time.time()), expiry_timestamp,
                            str(request.user_agent.string), int(client_ip_address_int), int(client_ip_address_is_ipv6)])
+        db_cursor.execute("DELETE FROM invite_codes WHERE invitee_email = ? AND invite_code = ?",
+                          [email.strip().lower(), str(invite_code)])
         db_connection.commit()
-        delete_invite(invite_code, email.strip().lower())
 
         return resp
 
@@ -240,7 +247,58 @@ def change_password_attempt():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    return "სადემონსტრაციო ვერსიაში არ არის ეს ფუნქცია"
+    old_password = request.form['old_password']
+    new_password = request.form['new_password']
+    repeat_new_password = request.form['repeat_new_password']
+
+    if not new_password == repeat_new_password:
+        return render_template(
+            "account_settings.html",
+            WEBSITE_CONTEXT=website_context,
+            USER_CONTEXT=user_context,
+            NOTICE_MESSAGE="ახალი პაროლები არ ემთხვევა",
+            ALERT_TYPE="alert-danger"
+        )
+
+    old_password_salt_db = tuple(db_cursor.execute("SELECT password_salt FROM user_passwords WHERE user_id = ?",
+                                                   [user_context.id]))
+    if not old_password_salt_db:
+        # This should never happen
+        return "გაუგებარი შეცდომა მოხდა."
+
+    old_password_salt = old_password_salt_db[0][0]
+
+    old_hashed_password = hashlib.sha256((old_password + old_password_salt).encode()).hexdigest()
+
+    db_query = tuple(db_cursor.execute("SELECT user_id FROM user_passwords WHERE user_id = ? AND password_hash = ?",
+                                       [user_context.id, old_hashed_password]))
+    if not db_query:
+        return render_template(
+            "account_settings.html",
+            WEBSITE_CONTEXT=website_context,
+            USER_CONTEXT=user_context,
+            NOTICE_MESSAGE="ძველი პაროლი არის არასწორად შეყვანილი",
+            ALERT_TYPE="alert-danger"
+        )
+
+    db_cursor.execute("DELETE FROM user_passwords WHERE user_id = ? AND password_hash = ? AND password_salt = ?",
+                      [str(user_context.id), str(old_hashed_password), old_password_salt])
+
+    new_password_salt = get_random_string(32)
+
+    new_hashed_password = hashlib.sha256((new_password + new_password_salt).encode()).hexdigest()
+
+    db_cursor.execute("INSERT INTO user_passwords (user_id, password_hash, password_salt) VALUES (?, ?, ?)",
+                      [str(user_context.id), str(new_hashed_password), new_password_salt])
+    db_connection.commit()
+
+    return render_template(
+        "account_settings.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        NOTICE_MESSAGE="პაროლი შეიცვალა წარმატებულად!",
+        ALERT_TYPE="alert-success"
+    )
 
 
 @user_management.route('/member_invite_form')
@@ -248,6 +306,9 @@ def member_invite_form():
     user_context = get_user_context()
     if not user_context:
         return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
 
     return render_template("member_invite_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
 
@@ -258,4 +319,274 @@ def member_invite_generate():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    return "სადემონსტრაციო ვერსიაში არ არის ეს ფუნქცია"
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    invitee_email = request.form['email']
+
+    invite_code = uuid.uuid4()
+
+    db_cursor.execute("INSERT INTO invite_codes (invite_code, invitee_email, inviter_id, "
+                      "generation_timestamp, expiry_timestamp) VALUES (?, ?, ?, ?, ?)",
+                      [str(invite_code), str(invitee_email.strip().lower()), str(user_context.id),
+                       int(time.time()), int(time.time() + (30 * 86400))])
+    db_connection.commit()
+
+    invite_listing_db = tuple(db_cursor.execute("SELECT invite_code, invitee_email, inviter_id, "
+                                                "generation_timestamp, expiry_timestamp "
+                                                "FROM invite_codes ORDER BY generation_timestamp DESC"))
+
+    invite_listing = []
+    for entry in invite_listing_db:
+        current_invite = Invite(entry)
+        current_invite_author = tuple(db_cursor.execute("SELECT id, email, display_name, is_administrator, is_approver "
+                                                        "FROM users WHERE id = ?", [current_invite.inviter_id]))
+        if current_invite_author:
+            current_invite.author = InviteAuthor(current_invite_author[0])
+        else:
+            current_invite.author = EntryDeletedAuthor(current_invite.inviter_id)
+        invite_listing.append(current_invite)
+
+    return render_template(
+        "invitee_listing.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        NOTICE_MESSAGE=f"მოწვევა მომხმარებლისთვის: {invitee_email} შეიქმნა! "
+                       f"გადაუგზავნეთ შემდეგი ლინქი: \n"
+                       f"{request.host_url[:-1] + url_for('user_management.registration_form', invite_code=invite_code)}",
+        ALERT_TYPE="alert-success",
+        INVITE_LISTING=invite_listing
+    )
+
+
+@user_management.route('/member_invite_listing')
+def member_invite_listing():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    invite_listing_db = tuple(db_cursor.execute("SELECT invite_code, invitee_email, inviter_id, "
+                                                "generation_timestamp, expiry_timestamp "
+                                                "FROM invite_codes ORDER BY generation_timestamp DESC"))
+
+    invite_listing = []
+    for entry in invite_listing_db:
+        current_invite = Invite(entry)
+        current_invite_author = tuple(db_cursor.execute("SELECT id, email, display_name, is_administrator, is_approver "
+                                                        "FROM users WHERE id = ?", [current_invite.inviter_id]))
+        if current_invite_author:
+            current_invite.author = InviteAuthor(current_invite_author[0])
+        else:
+            current_invite.author = EntryDeletedAuthor(current_invite.inviter_id)
+        invite_listing.append(current_invite)
+
+    return render_template(
+        "invitee_listing.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        INVITE_LISTING=invite_listing
+    )
+
+
+@user_management.route('/destroy_invite', methods=['GET'])
+def destroy_invite():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    invite_code = request.args.get('invite_code')
+
+    db_cursor.execute("DELETE FROM invite_codes WHERE invite_code = ?", [invite_code])
+    db_connection.commit()
+
+    return render_template(
+        "invitee_listing.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        NOTICE_MESSAGE=f"მოწვევა გაუქმებულია!",
+        ALERT_TYPE="alert-success",
+        INVITE_LISTING=[]
+    )
+
+
+@user_management.route('/administrator_password_recovery_form')
+def administrator_password_recovery_form():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    user_id = request.args.get('user_id')
+    user_lookup_db = tuple(db_cursor.execute("SELECT email, display_name, is_administrator FROM users WHERE id = ?", [user_id]))
+    if not user_lookup_db:
+        return "you are using this endpoint incorrectly"
+
+    if bool(user_lookup_db[0][2]):
+        return "ადმინისტრატორის ანგარიშის პაროლი არ აღდგება სხვა ადმინისტრატორის მიერ, უსაფრთხოების მიზნით."
+
+    return render_template(
+        "administrator_password_recovery_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        USER_ID=user_id,
+        USER_EMAIL=user_lookup_db[0][0],
+        USER_DISPLAY_NAME=user_lookup_db[0][1]
+    )
+
+
+@user_management.route('/administrator_password_recovery_attempt', methods=['POST'])
+def administrator_password_recovery_attempt():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    user_id = request.form['user_id']
+    new_password = request.form['new_password']
+    repeat_new_password = request.form['repeat_new_password']
+
+    if not new_password == repeat_new_password:
+        return render_template(
+            "account_settings.html",
+            WEBSITE_CONTEXT=website_context,
+            USER_CONTEXT=user_context,
+            NOTICE_MESSAGE="ახალი პაროლები არ ემთხვევა",
+            ALERT_TYPE="alert-danger"
+        )
+
+    db_cursor.execute("DELETE FROM user_passwords WHERE user_id = ?",
+                      [str(user_id)])
+
+    new_password_salt = get_random_string(32)
+
+    new_hashed_password = hashlib.sha256((new_password + new_password_salt).encode()).hexdigest()
+
+    db_cursor.execute("INSERT INTO user_passwords (user_id, password_hash, password_salt) VALUES (?, ?, ?)",
+                      [str(user_id), str(new_hashed_password), new_password_salt])
+    db_connection.commit()
+
+    return render_template(
+        "admin_panel.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        NOTICE_MESSAGE="პაროლი შეიცვალა წარმატებულად!",
+        ALERT_TYPE="alert-success"
+    )
+
+
+@user_management.route('/administrator_account_deletion_form')
+def administrator_account_deletion_form():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    user_id = request.args.get('user_id')
+    user_lookup_db = tuple(db_cursor.execute("SELECT email, display_name, is_administrator FROM users WHERE id = ?", [user_id]))
+    if not user_lookup_db:
+        return "you are using this endpoint incorrectly"
+
+    if bool(user_lookup_db[0][2]):
+        return "ადმინისტრატორის ანგარიში არ იშლება, სხვა ადმინისტრატორის მიერ, უსაფრთხოების მიზნით."
+
+    return render_template(
+        "administrator_account_deletion_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        USER_ID=user_id,
+        USER_EMAIL=user_lookup_db[0][0],
+        USER_DISPLAY_NAME=user_lookup_db[0][1]
+    )
+
+
+@user_management.route('/administrator_account_deletion_attempt', methods=['POST'])
+def administrator_account_deletion_attempt():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    user_id = request.form['user_id']
+
+    db_cursor.execute("DELETE FROM users WHERE id = ?", [str(user_id)])
+    db_cursor.execute("DELETE FROM session_tokens WHERE user_id = ?", [str(user_id)])
+    db_cursor.execute("DELETE FROM user_passwords WHERE user_id = ?", [str(user_id)])
+
+    return render_template(
+        "admin_panel.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        NOTICE_MESSAGE="მომხმარებელი წარმატებით წაიშალა!",
+        ALERT_TYPE="alert-success"
+    )
+
+
+@user_management.route('/administrator_account_editing_form')
+def administrator_account_editing_form():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    user_id = request.args.get('user_id')
+    user_lookup_db = tuple(db_cursor.execute("SELECT email, display_name, is_administrator, is_approver "
+                                             "FROM users WHERE id = ?", [user_id]))
+    if not user_lookup_db:
+        return "you are using this endpoint incorrectly"
+
+    return render_template(
+        "administrator_account_editing_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        USER_ID=user_id,
+        USER_EMAIL=user_lookup_db[0][0],
+        USER_DISPLAY_NAME=user_lookup_db[0][1],
+        USER_IS_ADMINISTRATOR=user_lookup_db[0][2],
+        USER_IS_APPROVER=user_lookup_db[0][3],
+    )
+
+
+@user_management.route('/administrator_account_editing_attempt', methods=['POST'])
+def administrator_account_editing_attempt():
+    user_context = get_user_context()
+    if not user_context:
+        return redirect(url_for("user_management.login_form"))
+
+    if not user_context.is_administrator == 1:
+        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+
+    user_id = request.form['user_id']
+    email = request.form['email']
+    display_name = request.form['display_name']
+    is_approver = request.form['is_approver']
+    is_administrator = request.form['is_administrator']
+
+    db_cursor.execute("UPDATE users SET email = ? , display_name = ? , is_administrator = ? , is_approver = ? "
+                      "WHERE id = ?",
+                      [str(email.strip().lower()), str(display_name), int(is_administrator), int(is_approver),
+                       str(user_id)])
+    db_connection.commit()
+
+    return render_template(
+        "admin_panel.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        NOTICE_MESSAGE="მომხმარებელი წარმატებულად განახლდა!",
+        ALERT_TYPE="alert-success"
+    )

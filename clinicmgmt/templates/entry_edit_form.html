@@ -6,22 +6,22 @@
         <form action="{{ url_for("schedule.edit_entry", entry_id=ENTRY.entry_id) }}" method="post" enctype="multipart/form-data">
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="პაციენტის სახელი" value="{{ ENTRY.patient_name }}" required />
-                    <label for="patient_name">პაციენტის სახელი/გვარი</label>
+                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="სახელი/გვარი" value="{{ ENTRY.patient_name }}" required />
+                    <label for="patient_name">სახელი/გვარი</label>
                 </div>
                 <div class="form-floating mt-1">
-                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="პაციენტის დაბადების წელი" value="{{ ENTRY.patient_birth_year }}" maxlength="4" />
-                    <label for="patient_birth_year">პაციენტის დაბ. წელი</label>
+                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="დაბ. წელი" value="{% if ENTRY.patient_birth_year %}{{ ENTRY.patient_birth_year }}{% endif %}" maxlength="4" />
+                    <label for="patient_birth_year">დაბ. წელი</label>
                 </div>
             </div>
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="ოპერაციის თარიღი და დრო" value="{{ ENTRY.scheduled_timestamp_html }}" required />
-                    <label for="timestamp">ოპერაციის თარიღი/დრო</label>
+                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="თარიღი/დრო" value="{{ ENTRY.scheduled_timestamp_html }}" required />
+                    <label for="timestamp">თარიღი/დრო</label>
                 </div>
                 <div class="form-floating my-1">
-                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="პაციენტის ტელეფონის ნომერი" value="{{ ENTRY.patient_phone_number }}" />
-                    <label for="patient_phone_number">პაციენტის ტელ. ნომერი</label>
+                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="ტელ. ნომერი" value="{{ ENTRY.patient_phone_number }}" />
+                    <label for="patient_phone_number">ტელ. ნომერი</label>
                 </div>
             </div>
             <div class="form-floating my-1">

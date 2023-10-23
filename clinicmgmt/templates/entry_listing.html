@@ -4,13 +4,15 @@
             <div class="container">
                 {% if USER_CONTEXT %}
                     <a href="{{ url_for("schedule.entry_maker_form") }}" class="btn btn-warning">ოპერაციის დამატება</a>
+                    <a href="{{ url_for("schedule.index_printable", **ARGS_TO_FORWARD) }}" class="btn btn-primary">ამოსაბეჭდი ვერსია</a>
                     <a href="{{ url_for("schedule.search_form") }}" class="btn btn-info">ძებნა</a>
-                    <a href="{{ url_for("schedule.all") }}" class="btn btn-success">არქივი და მომავალი</a>
-                    <a href="{{ url_for("schedule.calendar_form") }}" class="btn btn-primary">კალენდარი</a>
+                    <a href="{{ url_for("schedule.index", timeframe="all") }}" class="btn btn-danger">არქივი და მომავალი</a>
+                    <a href="{{ url_for("schedule.calendar_form") }}" class="btn btn-success">კალენდარი</a>
                 {% endif %}
             </div>
     </section>
     <div class="container">
+        <h3 class="pb-2">{{ TIMEFRAME_STR }}</h3>
         <div class="entry_listing">
         {% for ENTRY in ENTRIES %}
             <div class="card mb-1 {% if ENTRY.is_completed == 1 %}text-bg-success{% endif %}">

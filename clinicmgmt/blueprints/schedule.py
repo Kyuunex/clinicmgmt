@@ -17,34 +17,155 @@ schedule = Blueprint("schedule", __name__)
 
 
 @schedule.route('/', methods=['GET', 'POST'], endpoint="index")
-@schedule.route('/all', methods=['GET', 'POST'], endpoint="all")
-@schedule.route('/search', methods=['GET', 'POST'], endpoint="search")
+@schedule.route('/printable', methods=['GET', 'POST'], endpoint="index_printable")
 def index():
     user_context = get_user_context()
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    if request.endpoint == "schedule.search":
-        return "სადემონსტრაციო ვერსიაში არ არის ეს ფუნქცია"
-    elif request.endpoint == "schedule.all":
-        entry_db_lookup = tuple(db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, "
-                                                  "assigned_doctor_name, patient_name, scheduled_timestamp, "
-                                                  "added_timestamp, last_edited_timestamp, type_of_surgery, diagnosis, "
-                                                  "patient_birth_year, "
-                                                  "patient_phone_number, has_consultation_happened, is_completed "
-                                                  "FROM patient_entries ORDER BY scheduled_timestamp ASC"))
-    elif request.endpoint == "schedule.index":
-        entry_db_lookup = tuple(db_cursor.execute("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, "
-                                                  "assigned_doctor_name, patient_name, scheduled_timestamp, "
-                                                  "added_timestamp, last_edited_timestamp, type_of_surgery, diagnosis, "
-                                                  "patient_birth_year, "
-                                                  "patient_phone_number, has_consultation_happened, is_completed "
-                                                  "FROM patient_entries "
-                                                  "WHERE scheduled_timestamp < ? AND scheduled_timestamp > ? "
-                                                  "ORDER BY scheduled_timestamp ASC",
-                                                  [(time.time() + 86400), (time.time() - 86400)]))
+    timeframe = request.args.get('timeframe', "72hour")
+    timeframe_str = "ოპერაციები"
+
+    if request.method == 'POST':
+        args_to_forward = request.form.to_dict()
     else:
-        return
+        args_to_forward = request.args.to_dict()
+
+    if timeframe == "search":
+        args_to_forward["timeframe"] = "search"
+    elif timeframe == "all":
+        args_to_forward["timeframe"] = "all"
+
+    author_id = request.form.get('author_id', request.args.get('author_id', ""))
+    patient_name = request.form.get('patient_name', request.args.get('patient_name', ""))
+    assigned_doctor_id = request.form.get('assigned_doctor_id', request.args.get('assigned_doctor_id', ""))
+    assigned_doctor_name = request.form.get('assigned_doctor_name', request.args.get('assigned_doctor_name', ""))
+    year_month = request.form.get('year_month', request.args.get('year_month', ""))
+    html_timestamp = request.form.get('timestamp', request.args.get('timestamp', ""))
+    type_of_surgery = request.form.get('type_of_surgery', request.args.get('type_of_surgery', ""))
+    patient_birth_year = request.form.get('patient_birth_year', request.args.get('patient_birth_year', ""))
+    patient_phone_number = request.form.get('patient_phone_number', request.args.get('patient_phone_number', ""))
+    has_consultation_happened = request.form.get('has_consultation_happened',
+                                                 request.args.get('has_consultation_happened', ""))
+
+    base_query = ("SELECT id, author_id, last_edit_author_id, assigned_doctor_id, assigned_doctor_name, "
+                  "patient_name, scheduled_timestamp, added_timestamp, last_edited_timestamp, type_of_surgery, "
+                  "diagnosis, patient_birth_year, patient_phone_number, has_consultation_happened, "
+                  "is_completed FROM patient_entries")
+
+    where_conditions = []
+    params = []
+
+    if len(author_id) > 0:
+        where_conditions.append("author_id = ?")
+        params.append(author_id)
+
+    if len(patient_name) > 0:
+        where_conditions.append("patient_name LIKE ?")
+        params.append("%" + patient_name + "%")
+
+    if len(assigned_doctor_id) > 0:
+        where_conditions.append("assigned_doctor_id = ?")
+        params.append(assigned_doctor_id)
+
+    if len(assigned_doctor_name) > 0:
+        where_conditions.append("assigned_doctor_name LIKE ?")
+        params.append("%" + assigned_doctor_name + "%")
+
+    if len(type_of_surgery) > 0:
+        where_conditions.append("type_of_surgery = ?")
+        params.append(type_of_surgery)
+
+    if len(patient_birth_year) > 0:
+        where_conditions.append("patient_birth_year = ?")
+        params.append(patient_birth_year)
+
+    if len(patient_phone_number) > 0:
+        where_conditions.append("patient_phone_number LIKE ?")
+        params.append("%" + patient_phone_number + "%")
+
+    if len(has_consultation_happened) > 0:
+        where_conditions.append("has_consultation_happened = ?")
+        params.append(has_consultation_happened)
+
+    if timeframe == "72hour":
+        time_now = time.time()
+
+        where_conditions.append("scheduled_timestamp > ?")
+        params.append((time_now - 86400))
+        start_timestamp_obj = datetime.fromtimestamp((time_now - 86400), tz=website_context['timezone'])
+        start_timestamp_str = start_timestamp_obj.strftime("%Y-%m-%d %H:%M")
+
+        where_conditions.append("scheduled_timestamp < ?")
+        params.append((time_now + 86400))
+        end_timestamp_obj = datetime.fromtimestamp((time_now + 86400), tz=website_context['timezone'])
+        end_timestamp_str = end_timestamp_obj.strftime("%Y-%m-%d %H:%M")
+
+        timeframe_str = f"{start_timestamp_str} - {end_timestamp_str}"
+    elif timeframe == "all":
+        timeframe_str = "არქივი და მომავალი"
+    else:
+        timeframe_str = "ძებნის შედეგები"
+
+        if len(html_timestamp) > 0:
+            where_conditions.append("scheduled_timestamp > ?")
+            start_scheduled_timestamp_input_datetime = (datetime.strptime(html_timestamp + "T00:00:00" +
+                                                                          website_context['timezone_str'],
+                                                                          "%Y-%m-%dT%H:%M:%S%z"))
+            start_scheduled_timestamp = int(start_scheduled_timestamp_input_datetime.timestamp())
+            params.append(start_scheduled_timestamp - 1)
+
+            where_conditions.append("scheduled_timestamp < ?")
+            end_scheduled_timestamp_input_datetime = (datetime.strptime(html_timestamp + "T23:59:59" +
+                                                                        website_context['timezone_str'],
+                                                                        "%Y-%m-%dT%H:%M:%S%z"))
+            end_scheduled_timestamp = int(end_scheduled_timestamp_input_datetime.timestamp())
+            params.append(end_scheduled_timestamp + 1)
+
+            timeframe_str = (f"{start_scheduled_timestamp_input_datetime.strftime('%Y-%m-%d %H:%M')} - "
+                             f"{end_scheduled_timestamp_input_datetime.strftime('%Y-%m-%d %H:%M')}")
+
+        if len(year_month) > 0:
+            where_conditions.append("scheduled_timestamp > ?")
+            start_scheduled_timestamp_input_datetime = (datetime.strptime(year_month + "-01T00:00:00" +
+                                                                          website_context['timezone_str'],
+                                                                          "%Y-%m-%dT%H:%M:%S%z"))
+            start_scheduled_timestamp = int(start_scheduled_timestamp_input_datetime.timestamp())
+            params.append(start_scheduled_timestamp - 1)
+
+            where_conditions.append("scheduled_timestamp < ?")
+            end_scheduled_timestamp_input_datetime = (datetime.strptime(year_month + "-28T23:59:59" +
+                                                                        website_context['timezone_str'],
+                                                                        "%Y-%m-%dT%H:%M:%S%z"))
+            end_scheduled_timestamp = int(end_scheduled_timestamp_input_datetime.timestamp())
+
+            if end_scheduled_timestamp_input_datetime.month in [1, 3, 5, 7, 8, 10, 12]:  # 31 day months
+                append = 259200
+            elif end_scheduled_timestamp_input_datetime.month in [4, 6, 9, 11]:  # 30 day months
+                append = 172800
+            elif end_scheduled_timestamp_input_datetime.month == 2:  # february :(
+                year = end_scheduled_timestamp_input_datetime.year
+                if (year % 400 == 0) or (year % 100 != 0) and (year % 4 == 0): # is leap year
+                    append = 86400
+                else:
+                    append = 0
+            else:
+                append = 259200
+
+            params.append(end_scheduled_timestamp + append + 1)
+            timeframe_str = (f"{start_scheduled_timestamp_input_datetime.strftime('%Y-%m-%d %H:%M')} - "
+                             f"{end_scheduled_timestamp_input_datetime.strftime('%Y-%m-%d %H:%M')}")
+            # TODO: only 28 days show up, fix.
+
+    if where_conditions:
+        where_clause = " WHERE " + " AND ".join(where_conditions)
+    else:
+        where_clause = ""
+
+    final_query = base_query + where_clause + " ORDER BY scheduled_timestamp ASC"
+
+    print(final_query)
+    entry_db_lookup = tuple(db_cursor.execute(final_query, params))
 
     entries = []
     for entry in entry_db_lookup:
@@ -57,14 +178,30 @@ def index():
             current_entry.author = EntryDeletedAuthor(current_entry.author_id)
         entries.append(current_entry)
 
-    return make_response(
-        render_template(
-            "entry_listing.html",
-            WEBSITE_CONTEXT=website_context,
-            USER_CONTEXT=user_context,
-            ENTRIES=entries
+    if request.endpoint == "schedule.index_printable":
+        print_timestamp_obj = datetime.fromtimestamp((time.time() + 86400), tz=website_context['timezone'])
+        print_timestamp_str = print_timestamp_obj.strftime("%Y-%m-%d %H:%M")
+        return make_response(
+            render_template(
+                "entry_listing_printable.html",
+                WEBSITE_CONTEXT=website_context,
+                USER_CONTEXT=user_context,
+                ENTRIES=entries,
+                TIMEFRAME_STR=timeframe_str,
+                PRINT_TIMESTAMP_STR=print_timestamp_str
+            )
         )
-    )
+    else:
+        return make_response(
+            render_template(
+                "entry_listing.html",
+                WEBSITE_CONTEXT=website_context,
+                USER_CONTEXT=user_context,
+                ENTRIES=entries,
+                TIMEFRAME_STR=timeframe_str,
+                ARGS_TO_FORWARD=args_to_forward
+            )
+        )
 
 
 @schedule.route('/entry_maker_form')
@@ -93,8 +230,11 @@ def make_entry():
         patient_phone_number = request.form['patient_phone_number']
         has_consultation_happened = request.form['has_consultation_happened']
 
-        if not patient_birth_year.isdigit():
-            return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
+        if len(patient_birth_year) > 0:
+            if not patient_birth_year.isdigit():
+                return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
+        else:
+            patient_birth_year = None
 
         scheduled_timestamp_input_datetime = datetime.strptime(html_timestamp + ":00" + website_context['timezone_str'], "%Y-%m-%dT%H:%M:%S%z")
         scheduled_timestamp = int(scheduled_timestamp_input_datetime.timestamp())
@@ -109,7 +249,7 @@ def make_entry():
                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                           [str(entry_id), user_context.id, user_context.id, assigned_doctor_id, assigned_doctor_name,
                            patient_name, int(scheduled_timestamp), int(time.time()), int(time.time()), type_of_surgery,
-                           diagnosis, int(patient_birth_year), patient_phone_number, int(has_consultation_happened), 0])
+                           diagnosis, patient_birth_year, patient_phone_number, int(has_consultation_happened), 0])
         db_connection.commit()
 
         resp = make_response(redirect(url_for("schedule.entry_view", entry_id=entry_id)))
@@ -230,8 +370,11 @@ def edit_entry(entry_id):
         has_consultation_happened = request.form['has_consultation_happened']
         is_completed = request.form['is_completed']
 
-        if not patient_birth_year.isdigit():
-            return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
+        if len(patient_birth_year) > 0:
+            if not patient_birth_year.isdigit():
+                return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
+        else:
+            patient_birth_year = None
 
         scheduled_timestamp_input_datetime = datetime.strptime(timestamp + ":00" + website_context['timezone_str'], "%Y-%m-%dT%H:%M:%S%z")
         scheduled_timestamp = int(scheduled_timestamp_input_datetime.timestamp())
@@ -243,7 +386,7 @@ def edit_entry(entry_id):
                           "has_consultation_happened = ?, is_completed = ? WHERE id = ?",
                           [user_context.id, assigned_doctor_id, assigned_doctor_name, patient_name,
                            scheduled_timestamp, int(time.time()), type_of_surgery,
-                           diagnosis, int(patient_birth_year), patient_phone_number,
+                           diagnosis, patient_birth_year, patient_phone_number,
                            has_consultation_happened, is_completed, entry_id])
         db_connection.commit()
 

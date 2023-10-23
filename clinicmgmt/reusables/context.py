@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from datetime import timedelta, timezone
+import locale
 
 if not os.environ.get('CLINICMGMT_SQLITE_FILE'):
     print("This app uses an sqlite3 database. "
@@ -95,3 +96,9 @@ else:
 
 website_context["timezone_str"] = "+04:00"
 website_context["timezone"] = timezone(timedelta(seconds=14400))
+
+
+try:
+    locale.setlocale(locale.LC_TIME, 'ka_GE.utf8')
+except locale.Error:
+    print("ქართული ენის locale არ არის გენერირებული ამ სისტემაზე! ინგლისური იქნება გამოყენებული")

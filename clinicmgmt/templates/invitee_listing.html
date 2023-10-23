@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block HTML_CONTENTS %}
+    {% if USER_CONTEXT.is_administrator == 1 %}
+        <section class="bg-dark text-light py-3 mb-2">
+            <div class="container">
+                <a href="{{ url_for("user_management.member_invite_form") }}" class="btn btn-warning">მომხმარებლის მოწვევა</a>
+            </div>
+        </section>
+    {% endif %}
+    <div class="container">
+    {% for INVITE in INVITE_LISTING %}
+        <div class="card mb-2">
+            <h5 class="card-header">
+                {{ INVITE.invitee_email }}
+            </h5>
+            <div class="card-body">
+                <p class="card-text">
+                    <input onClick="this.select();" id="reg_link" type="text" class="form-control-plaintext" placeholder="რეგისტრაციის ლინქი"
+                           value="{{ request.host_url[:-1] + url_for("user_management.registration_form", invite_code=INVITE.invite_code) }}" readonly />
+                    შექმნის დრო: {{ INVITE.generation_timestamp_str }},<br>
+                    ვადის გასვლის დრო: {{ INVITE.expiry_timestamp_str }}
+                </p>
+                <a href="{{ url_for("user_management.destroy_invite", invite_code=INVITE.invite_code) }}" class="btn btn-danger">მოწვევის გაუქმება</a>
+            </div>
+            <div class="card-footer">
+                მომწვევი: {{ INVITE.author.display_name }}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid black;
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 4px;
+                text-align: left;
+            }
+        </style>
+    </head>
+    <body>
+
+        <h3>{{ TIMEFRAME_STR }}</h3>
+        <h6>ამობეჭდვის დრო: {{ PRINT_TIMESTAMP_STR }}</h6>
+        <table>
+            <tr>
+                <th>თარიღი</th>
+                <th>სახელი/გვარი</th>
+                <th>ტიპი</th>
+                <th>ექიმი</th>
+                <th>დიაგნოზი</th>
+                <th>შესრულებული</th>
+                <th>ტელ.</th>
+            </tr>
+            {% for ENTRY in ENTRIES %}
+                <tr>
+                    <td>{{ ENTRY.scheduled_timestamp_str }}</td>
+                    <td>{{ ENTRY.patient_name }} {% if ENTRY.patient_birth_year %}({{ ENTRY.patient_birth_year }}){% endif %}</td>
+                    <td>{{ ENTRY.type_of_surgery }}</td>
+                    <td>{{ ENTRY.assigned_doctor_name }}</td>
+                    <td>{{ ENTRY.diagnosis }}</td>
+                    <td>{% if ENTRY.is_completed == 1 %}✓{% endif %}</td>
+                    <td>{{ ENTRY.patient_phone_number }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

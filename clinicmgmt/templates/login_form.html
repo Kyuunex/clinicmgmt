@@ -27,7 +27,7 @@
                     </div>
                 </form>
                 <div class="form-floating my-1">
-                    {% if ALLOW_REGISTRATION %}
+                    {% if not IS_ANYONE_REGISTERED %}
                         <a href='{{ url_for("user_management.registration_form") }}' class="btn btn-secondary">ანგარიშის რეგისტრაცია</a>
                     {% endif %}
                 </div>

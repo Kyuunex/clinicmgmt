@@ -8,32 +8,39 @@
             <a href="{{ url_for("cookies") }}" class="alert-link">დამატებითი ინფორმაცია</a>
         </div>
         <div class="d-flex justify-content-center">
-            <div class="col-8 col-sm-8 col-md-5 col-lg-4 col-xl-3 col-xxl-3">
-            <h2>რეგისტრაცია</h2>
-            <form action="{{ url_for("user_management.registration_attempt") }}" method="POST">
-                <div class="form-floating my-1">
-                    <input name="display_name" type="text" id="display_name" class="form-control" placeholder="display name" required />
-                    <label for="display_name">სახელი/გვარი</label>
-                </div>
-                <div class="form-floating my-1">
-                    <input name="email" type="email" id="email" class="form-control" placeholder="email" required />
-                    <label for="email">ელ-ფოსტა</label>
-                </div>
-                <div class="alert alert-danger mt-2 mb-1">
-                    გთხოვთ არ გამოიყენოთ იგივე პაროლი რომელიც სხვაგან გაქვთ გამოყენებული!
-                </div>
-                <div class="form-floating my-1">
-                    <input name="password" type="password" id="password" class="form-control" placeholder="enter your password here" required />
-                    <label for="password">პაროლი</label>
-                </div>
-                <div class="form-floating my-1">
-                    <input name="repeat_password" type="password" id="repeat_password" class="form-control" placeholder="repeat password" required />
-                    <label for="repeat_password">პაროლის გამეორება</label>
-                </div>
-                <div class="form-floating my-1">
-                    <input value="რეგისტრაციის დასრულება" type="submit" class="btn btn-primary" />
-                </div>
-            </form>
+            <div class="col-10 col-sm-10 col-md-6 col-lg-5 col-xl-4 col-xxl-4">
+                <h2>რეგისტრაცია</h2>
+                <form action="{{ url_for("user_management.registration_attempt") }}" method="POST">
+                    {% if INVITE_CODE %}
+                        <div class="form-floating my-1">
+                            <input name="invite_code" type="text" id="invite_code" class="form-control-plaintext" placeholder="მოწვევის კოდი" value="{{ INVITE_CODE }}" readonly />
+                            <label for="invite_code">მოწვევის კოდი</label>
+                        </div>
+                    {% endif %}
+
+                    <div class="form-floating my-1">
+                        <input name="display_name" type="text" id="display_name" class="form-control" placeholder="display name" required />
+                        <label for="display_name">სახელი/გვარი</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        <input name="email" type="email" id="email" class="form-control" placeholder="email" required />
+                        <label for="email">ელ-ფოსტა</label>
+                    </div>
+                    <div class="alert alert-danger mt-2 mb-1">
+                        გთხოვთ არ გამოიყენოთ იგივე პაროლი რომელიც სხვაგან გაქვთ გამოყენებული!
+                    </div>
+                    <div class="form-floating my-1">
+                        <input name="password" type="password" id="password" class="form-control" placeholder="enter your password here" required />
+                        <label for="password">პაროლი</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        <input name="repeat_password" type="password" id="repeat_password" class="form-control" placeholder="repeat password" required />
+                        <label for="repeat_password">პაროლის გამეორება</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        <input value="რეგისტრაციის დასრულება" type="submit" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
         </div>
     </div>

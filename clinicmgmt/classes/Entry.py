@@ -22,7 +22,7 @@ class Entry:
         self.is_completed = entry_db_lookup[14]
 
         scheduled_timestamp_tmp = datetime.fromtimestamp(self.scheduled_timestamp, tz=website_context['timezone'])
-        self.scheduled_timestamp_str = scheduled_timestamp_tmp.strftime("%Y-%m-%d %H:%M")
+        self.scheduled_timestamp_str = scheduled_timestamp_tmp.strftime("%Y-%m-%d %H:%M - %A")
         self.scheduled_timestamp_html = scheduled_timestamp_tmp.strftime("%Y-%m-%dT%H:%M")
 
         last_edited_timestamp_tmp = datetime.fromtimestamp(self.last_edited_timestamp, tz=website_context['timezone'])

@@ -6,22 +6,22 @@
         <form action="{{ url_for("schedule.make_entry") }}" method="post" enctype="multipart/form-data">
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="პაციენტის სახელი" required />
-                    <label for="patient_name">პაციენტის სახელი/გვარი</label>
+                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="სახელი/გვარი" required />
+                    <label for="patient_name">სახელი/გვარი</label>
                 </div>
                 <div class="form-floating mt-1">
-                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="პაციენტის დაბადების წელი" maxlength="4" />
-                    <label for="patient_birth_year">პაციენტის დაბ. წელი</label>
+                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="დაბადების წელი" maxlength="4" />
+                    <label for="patient_birth_year">დაბ. წელი</label>
                 </div>
             </div>
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="ოპერაციის თარიღი და დრო" required />
-                    <label for="timestamp">ოპერაციის თარიღი/დრო</label>
+                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="თარიღი/დრო" required />
+                    <label for="timestamp">თარიღი/დრო</label>
                 </div>
                 <div class="form-floating my-1">
-                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="პაციენტის ტელეფონის ნომერი" />
-                    <label for="patient_phone_number">პაციენტის ტელ. ნომერი</label>
+                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="ტელ. ნომერი" />
+                    <label for="patient_phone_number">ტელ. ნომერი</label>
                 </div>
             </div>
             <div class="form-floating my-1">
