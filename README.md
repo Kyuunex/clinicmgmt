@@ -2,14 +2,6 @@
 Internal clinic management web-portal, made in Flask.
 კლინიკის მენჯმენტის ვებ-პორტალი
 
-# Demo version
-This version of this software is for demonstration purposes only. Some parts of the code are omitted.
-Using this version of the software is forbidden in a commercial setting.
-
-# სადემონსტრაციო ვერსია
-ეს არის სადემონსტრაციო ვერსია. კოდის ზოგი ნაწილი ამოღებულია ამ ვერსიიდან.
-ამ პროგრამის ამ ვერსიის გამოყენება კომერციულ ადგილას დაუშვებელია.
-
 ### Installation for prod
 Install this as a pip package with this command `python3 -m pip install . --upgrade`.
 Then make an apache conf that looks something like this
