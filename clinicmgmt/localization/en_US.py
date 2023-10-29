@@ -125,6 +125,7 @@ TITLE = "Title"
 LANGUAGE = "Language"
 TIMEZONE = "Timezone"
 UPDATE_CONFIGURATION = "Update configuration"
+ADMINISTRATOR_REGISTRATION = "Administrator registration"
 
 # COOKIES
 COOKIES = "Cookies"

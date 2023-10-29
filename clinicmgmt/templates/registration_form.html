@@ -8,7 +8,11 @@
         </div>
         <div class="d-flex justify-content-center">
             <div class="col-10 col-sm-10 col-md-6 col-lg-5 col-xl-4 col-xxl-4">
-                <h2>{{ LANG_STRINGS.ACCOUNT_REGISTRATION }}</h2>
+                {% if not IS_ANYONE_REGISTERED %}
+                    <h2>{{ LANG_STRINGS.ADMINISTRATOR_REGISTRATION }}</h2>
+                {% else %}
+                    <h2>{{ LANG_STRINGS.ACCOUNT_REGISTRATION }}</h2>
+                {% endif %}
                 <form action="{{ url_for("user_management.registration_attempt") }}" method="POST">
                     {% if INVITE_CODE %}
                         <div class="form-floating my-1">

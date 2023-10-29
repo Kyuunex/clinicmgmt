@@ -124,6 +124,7 @@ TITLE = "სახელწოდება"
 LANGUAGE = "ენა"
 TIMEZONE = "სასაათო სარტყელი"
 UPDATE_CONFIGURATION = "კონფიგურაციის განახლება"
+ADMINISTRATOR_REGISTRATION = "ადმინისტრატორის რეგისტრაცია"
 
 # COOKIES
 COOKIES = "ქუქი-ჩანაწერი"
