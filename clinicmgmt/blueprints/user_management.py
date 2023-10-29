@@ -43,6 +43,8 @@ def login_form():
         return redirect(url_for("schedule.index"))
 
     is_anyone_registered = tuple(db_cursor.execute("SELECT id FROM users"))
+    if not is_anyone_registered:
+        return redirect(url_for("user_management.registration_form"))
 
     return render_template(
         "login_form.html",
@@ -78,6 +80,7 @@ def registration_form():
         "registration_form.html",
         WEBSITE_CONTEXT=website_context,
         INVITE_CODE=invite_code,
+        IS_ANYONE_REGISTERED=is_anyone_registered,
         LANG_STRINGS=LANG_STRINGS
     )
 
