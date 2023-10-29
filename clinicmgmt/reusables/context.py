@@ -2,6 +2,7 @@ import os
 import sqlite3
 from datetime import timedelta, timezone
 import locale
+from clinicmgmt.reusables.convert_times import str_to_seconds
 
 if not os.environ.get('CLINICMGMT_SQLITE_FILE'):
     print("This app uses an sqlite3 database. "
@@ -93,10 +94,19 @@ language_to_use_db = tuple(db_cursor.execute(
     "SELECT value FROM app_configuration WHERE setting = ?", ["language"])
 )
 
+timezone_str_db = tuple(db_cursor.execute(
+    "SELECT value FROM app_configuration WHERE setting = ?", ["timezone_str"])
+)
+
 if language_to_use_db:
     language_to_use = language_to_use_db[0][0]
 else:
     language_to_use = "en_US"
+
+if timezone_str_db:
+    timezone_str = timezone_str_db[0][0]
+else:
+    timezone_str = "+00:00"
 
 if language_to_use == "ka_GE":
     try:
@@ -114,5 +124,5 @@ if user_context_list:
 else:
     website_context["title"] = LANG_STRINGS.SCHEDULE
 
-website_context["timezone_str"] = "+04:00"
-website_context["timezone"] = timezone(timedelta(seconds=14400))
+website_context["timezone_str"] = timezone_str
+website_context["timezone"] = timezone(timedelta(seconds=str_to_seconds(timezone_str)))
