@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block HTML_CONTENTS %}
+<div class="container">
+    <form action="{{ url_for('administration.update_website_config') }}" method="post" enctype="multipart/form-data">
+        <p>
+            {{ LANG_STRINGS.YOU_MUST_RESTART_TO_APPLY_CHANGES }}
+        </p>
+
+        <div class="form-floating my-1">
+            <input name="title" type="text" id="title" class="form-control" placeholder="{{ LANG_STRINGS.TITLE }}" value="{{ CONFIG.title }}" required />
+            <label for="title">{{ LANG_STRINGS.TITLE }}</label>
+        </div>
+
+        <div class="form-floating my-1">
+            <select class="form-select" name="language" id="language">
+                {% for ONE_LANGUAGE in SUPPORTED_LANGUAGES %}
+                    <option value="{{ ONE_LANGUAGE[0] }}"{% if CONFIG.language == ONE_LANGUAGE[0] %} selected{% endif %}>{{ ONE_LANGUAGE[1] }}</option>
+                {% endfor %}
+            </select>
+            <label for="language">{{ LANG_STRINGS.LANGUAGE }}</label>
+        </div>
+
+        <div class="form-floating my-1">
+            <select class="form-select" name="timezone_str" id="timezone_str">
+                {% for TZ_STR in ALL_TIMEZONES %}
+                    <option value="{{ TZ_STR }}"{% if CONFIG.timezone_str == TZ_STR %} selected{% endif %}>{{ TZ_STR }}</option>
+                {% endfor %}
+            </select>
+            <label for="timezone_str">{{ LANG_STRINGS.TIMEZONE }}</label>
+        </div>
+
+        <div class="form-floating my-1">
+            <input type="submit" value="{{ LANG_STRINGS.UPDATE_CONFIGURATION }}" class="btn btn-danger" />
+        </div>
+    </form>
+</div>
+{% endblock %}

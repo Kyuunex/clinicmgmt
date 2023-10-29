@@ -78,7 +78,7 @@ db_cursor.execute("""
 """)
 db_cursor.execute("""
         CREATE TABLE IF NOT EXISTS "app_configuration" (
-            "setting"    TEXT NOT NULL,
+            "setting"    TEXT PRIMARY KEY NOT NULL,
             "value"    TEXT NOT NULL
         )
 """)

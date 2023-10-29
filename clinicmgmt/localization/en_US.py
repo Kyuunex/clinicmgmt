@@ -29,6 +29,7 @@ USER_DELETED_SUCCESSFULLY = "User has been deleted successfully!"
 USER_SUCCESSFULLY_UPDATED = "User has been updated successfully!"
 ONLY_ADMIN_HAS_PERMISSIONS_TO_TURN_OFF_THE_SITE = "Only the administrator can shut down the site!"
 SERVER_IS_READY_FOR_SHUTDOWN = "Server is ready for shutdown."
+CONFIG_SAVED_RESTART_TO_APPLY = "Configuration was saved! Please restart this software for changes to apply!"
 
 # IN VIEWS
 ACCOUNT_SETTINGS = "Account settings"
@@ -118,6 +119,12 @@ EDIT = "Edit"
 INFORMATION_AUTHOR = "Information author"
 INFORMATION_ADDED_AT = "Information added at"
 INFORMATION_LAST_UPDATED_AT = "Information last updated at"
+WEB_PORTAL_CONFIGURATION = "Web-portal configuration"
+YOU_MUST_RESTART_TO_APPLY_CHANGES = "You must restart this software for changes to apply."
+TITLE = "Title"
+LANGUAGE = "Language"
+TIMEZONE = "Timezone"
+UPDATE_CONFIGURATION = "Update configuration"
 
 # COOKIES
 COOKIES = "Cookies"
