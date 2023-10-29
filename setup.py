@@ -6,7 +6,7 @@ setup(
         'clinicmgmt',
         'clinicmgmt.blueprints',
         'clinicmgmt.classes',
-        'clinicmgmt.localization'
+        'clinicmgmt.localization',
         'clinicmgmt.reusables'
     ],
     include_package_data=True,
