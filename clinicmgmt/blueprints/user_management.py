@@ -158,9 +158,11 @@ def registration_attempt():
         if not is_anyone_registered:
             is_administrator = 1
             is_approver = 1
+            page_after_registration = "administration.website_configuration_form"
         else:
             is_administrator = 0
             is_approver = 0
+            page_after_registration = "schedule.index"
 
         email_already_taken = tuple(db_cursor.execute("SELECT id FROM users WHERE email = ? COLLATE NOCASE",
                                                       [email.strip().lower()]))
@@ -181,7 +183,7 @@ def registration_attempt():
         db_connection.commit()
 
         new_session_token = get_random_string(32)
-        resp = make_response(redirect(url_for("schedule.index")))
+        resp = make_response(redirect(url_for(page_after_registration)))
         resp.set_cookie('session_token', new_session_token, max_age=34560000)
         token_id = uuid.uuid4()
         expiry_timestamp = int(time.time()) + 34560000
