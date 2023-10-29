@@ -2,58 +2,58 @@
 
 {% block HTML_CONTENTS %}
     <div class="container">
-        <h2>ოპერაციის რედაქტირება</h2>
+        <h2>{{ LANG_STRINGS.EDIT_OPERATION }}</h2>
         <form action="{{ url_for("schedule.edit_entry", entry_id=ENTRY.entry_id) }}" method="post" enctype="multipart/form-data">
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="სახელი/გვარი" value="{{ ENTRY.patient_name }}" required />
-                    <label for="patient_name">სახელი/გვარი</label>
+                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="{{ LANG_STRINGS.NAME_SLASH_SURNAME }}" value="{{ ENTRY.patient_name }}" required />
+                    <label for="patient_name">{{ LANG_STRINGS.NAME_SLASH_SURNAME }}</label>
                 </div>
                 <div class="form-floating mt-1">
-                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="დაბ. წელი" value="{% if ENTRY.patient_birth_year %}{{ ENTRY.patient_birth_year }}{% endif %}" maxlength="4" />
-                    <label for="patient_birth_year">დაბ. წელი</label>
+                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="{{ LANG_STRINGS.BIRTH_YEAR_SHORT }}" value="{% if ENTRY.patient_birth_year %}{{ ENTRY.patient_birth_year }}{% endif %}" maxlength="4" />
+                    <label for="patient_birth_year">{{ LANG_STRINGS.BIRTH_YEAR_SHORT }}</label>
                 </div>
             </div>
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="თარიღი/დრო" value="{{ ENTRY.scheduled_timestamp_html }}" required />
-                    <label for="timestamp">თარიღი/დრო</label>
+                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="{{ LANG_STRINGS.DATE_SLASH_TIME }}" value="{{ ENTRY.scheduled_timestamp_html }}" required />
+                    <label for="timestamp">{{ LANG_STRINGS.DATE_SLASH_TIME }}</label>
                 </div>
                 <div class="form-floating my-1">
-                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="ტელ. ნომერი" value="{{ ENTRY.patient_phone_number }}" />
-                    <label for="patient_phone_number">ტელ. ნომერი</label>
+                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="{{ LANG_STRINGS.PHONE_NUMBER_SHORT }}" value="{{ ENTRY.patient_phone_number }}" />
+                    <label for="patient_phone_number">{{ LANG_STRINGS.PHONE_NUMBER_SHORT }}</label>
                 </div>
             </div>
             <div class="form-floating my-1">
-                <input name="assigned_doctor_name" type="text" id="assigned_doctor_name" class="form-control" placeholder="მკურნალი ექიმი" value="{{ ENTRY.assigned_doctor_name }}" required />
-                <label for="assigned_doctor_name">მკურნალი ექიმი</label>
+                <input name="assigned_doctor_name" type="text" id="assigned_doctor_name" class="form-control" placeholder="{{ LANG_STRINGS.TENDING_DOCTOR }}" value="{{ ENTRY.assigned_doctor_name }}" required />
+                <label for="assigned_doctor_name">{{ LANG_STRINGS.TENDING_DOCTOR }}</label>
             </div>
             <div class="form-floating my-1">
                 <select class="form-select" name="has_consultation_happened" id="has_consultation_happened">
-                    <option value="1"{% if ENTRY.has_consultation_happened == 1 %} selected{% endif %}>დიახ</option>
-                    <option value="0"{% if ENTRY.has_consultation_happened == 0 %} selected{% endif %}>არა</option>
+                    <option value="1"{% if ENTRY.has_consultation_happened == 1 %} selected{% endif %}>{{ LANG_STRINGS.YES }}</option>
+                    <option value="0"{% if ENTRY.has_consultation_happened == 0 %} selected{% endif %}>{{ LANG_STRINGS.NO }}</option>
                 </select>
-                <label for="is_completed">გაიარა კონსულტაცია</label>
+                <label for="has_consultation_happened">{{ LANG_STRINGS.HAS_COMPLETED_CONSULTATION }}</label>
             </div>
             <div class="form-floating my-1">
-                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="ოპერაციის ტიპი" value="{{ ENTRY.type_of_surgery }}" required />
-                <label for="type_of_surgery">ოპერაციის ტიპი</label>
+                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="{{ LANG_STRINGS.TYPE_OF_SURGERY }}" value="{{ ENTRY.type_of_surgery }}" required />
+                <label for="type_of_surgery">{{ LANG_STRINGS.TYPE_OF_SURGERY }}</label>
             </div>
             <div class="form-floating my-1">
-                <textarea rows="4" style="height:40%;" name="diagnosis" type="text" id="diagnosis" class="form-control" placeholder="დიაგნოზი" required >{{ ENTRY.diagnosis }}</textarea>
-                <label for="diagnosis">დიაგნოზი</label>
+                <textarea rows="4" style="height:40%;" name="diagnosis" type="text" id="diagnosis" class="form-control" placeholder="{{ LANG_STRINGS.DIAGNOSIS }}" required >{{ ENTRY.diagnosis }}</textarea>
+                <label for="diagnosis">{{ LANG_STRINGS.DIAGNOSIS }}</label>
             </div>
 
             <div class="form-floating my-1">
                 <select class="form-select" name="is_completed" id="is_completed">
-                    <option value="1"{% if ENTRY.is_completed == 1 %} selected{% endif %}>დიახ</option>
-                    <option value="0"{% if ENTRY.is_completed == 0 %} selected{% endif %}>არა</option>
+                    <option value="1"{% if ENTRY.is_completed == 1 %} selected{% endif %}>{{ LANG_STRINGS.YES }}</option>
+                    <option value="0"{% if ENTRY.is_completed == 0 %} selected{% endif %}>{{ LANG_STRINGS.NO }}</option>
                 </select>
-                <label for="is_completed">შესრულებული</label>
+                <label for="is_completed">{{ LANG_STRINGS.COMPLETED }}</label>
             </div>
 
             <div class="form-floating my-1">
-                <input type="submit" value="განახლება" class="btn btn-primary" />
+                <input type="submit" value="{{ LANG_STRINGS.UPDATE }}" class="btn btn-primary" />
             </div>
         </form>
     </div>

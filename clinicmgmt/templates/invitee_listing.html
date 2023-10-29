@@ -4,7 +4,7 @@
     {% if USER_CONTEXT.is_administrator == 1 %}
         <section class="bg-dark text-light py-3 mb-2">
             <div class="container">
-                <a href="{{ url_for("user_management.member_invite_form") }}" class="btn btn-warning">მომხმარებლის მოწვევა</a>
+                <a href="{{ url_for("user_management.member_invite_form") }}" class="btn btn-warning">{{ LANG_STRINGS.INVITE_USER }}</a>
             </div>
         </section>
     {% endif %}
@@ -16,15 +16,15 @@
             </h5>
             <div class="card-body">
                 <p class="card-text">
-                    <input onClick="this.select();" id="reg_link" type="text" class="form-control-plaintext" placeholder="რეგისტრაციის ლინქი"
+                    <input onClick="this.select();" id="reg_link" type="text" class="form-control-plaintext" placeholder="{{ LANG_STRINGS.REGISTRATION_LINK }}"
                            value="{{ request.host_url[:-1] + url_for("user_management.registration_form", invite_code=INVITE.invite_code) }}" readonly />
-                    შექმნის დრო: {{ INVITE.generation_timestamp_str }},<br>
-                    ვადის გასვლის დრო: {{ INVITE.expiry_timestamp_str }}
+                    {{ LANG_STRINGS.CREATED_AT }}: {{ INVITE.generation_timestamp_str }},<br>
+                    {{ LANG_STRINGS.EXPIRY_DATE }}: {{ INVITE.expiry_timestamp_str }}
                 </p>
-                <a href="{{ url_for("user_management.destroy_invite", invite_code=INVITE.invite_code) }}" class="btn btn-danger">მოწვევის გაუქმება</a>
+                <a href="{{ url_for("user_management.destroy_invite", invite_code=INVITE.invite_code) }}" class="btn btn-danger">{{ LANG_STRINGS.INVALIDATE_INVITE }}</a>
             </div>
             <div class="card-footer">
-                მომწვევი: {{ INVITE.author.display_name }}
+                {{ LANG_STRINGS.INVITER }}: {{ INVITE.author.display_name }}
             </div>
         </div>
     {% endfor %}

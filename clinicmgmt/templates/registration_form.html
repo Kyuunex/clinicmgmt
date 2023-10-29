@@ -3,42 +3,41 @@
 {% block HTML_CONTENTS %}
     <div class="container">
         <div class="alert alert-warning">
-            შესვლის და რეგისტრაციის ფუნქციას ესაჭიროება cookie ჩანაწერების გამოყენება.
-            შესვლით ან დარეგისტრირებით თქვენ ეთანხმებით თქვენს ბრაუზერში cookie ჩანაწერების გამოყენებას.
-            <a href="{{ url_for("cookies") }}" class="alert-link">დამატებითი ინფორმაცია</a>
+            {{ LANG_STRINGS.LOGIN_REGISTRATION_REQUIRES_COOKIES }}
+            <a href="{{ url_for("cookies") }}" class="alert-link">{{ LANG_STRINGS.LEARN_MORE }}</a>
         </div>
         <div class="d-flex justify-content-center">
             <div class="col-10 col-sm-10 col-md-6 col-lg-5 col-xl-4 col-xxl-4">
-                <h2>რეგისტრაცია</h2>
+                <h2>{{ LANG_STRINGS.ACCOUNT_REGISTRATION }}</h2>
                 <form action="{{ url_for("user_management.registration_attempt") }}" method="POST">
                     {% if INVITE_CODE %}
                         <div class="form-floating my-1">
-                            <input name="invite_code" type="text" id="invite_code" class="form-control-plaintext" placeholder="მოწვევის კოდი" value="{{ INVITE_CODE }}" readonly />
-                            <label for="invite_code">მოწვევის კოდი</label>
+                            <input name="invite_code" type="text" id="invite_code" class="form-control-plaintext" placeholder="{{ LANG_STRINGS.INVITE_CODE }}" value="{{ INVITE_CODE }}" readonly />
+                            <label for="invite_code">{{ LANG_STRINGS.INVITE_CODE }}</label>
                         </div>
                     {% endif %}
 
                     <div class="form-floating my-1">
-                        <input name="display_name" type="text" id="display_name" class="form-control" placeholder="display name" required />
-                        <label for="display_name">სახელი/გვარი</label>
+                        <input name="display_name" type="text" id="display_name" class="form-control" placeholder="{{ LANG_STRINGS.NAME_SLASH_SURNAME }}" required />
+                        <label for="display_name">{{ LANG_STRINGS.NAME_SLASH_SURNAME }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input name="email" type="email" id="email" class="form-control" placeholder="email" required />
-                        <label for="email">ელ-ფოსტა</label>
+                        <input name="email" type="email" id="email" class="form-control" placeholder="{{ LANG_STRINGS.EMAIL }}" required />
+                        <label for="email">{{ LANG_STRINGS.EMAIL }}</label>
                     </div>
                     <div class="alert alert-danger mt-2 mb-1">
-                        გთხოვთ არ გამოიყენოთ იგივე პაროლი რომელიც სხვაგან გაქვთ გამოყენებული!
+                        {{ LANG_STRINGS.DO_NOT_REUSE_A_PASSWORD }}
                     </div>
                     <div class="form-floating my-1">
-                        <input name="password" type="password" id="password" class="form-control" placeholder="enter your password here" required />
-                        <label for="password">პაროლი</label>
+                        <input name="password" type="password" id="password" class="form-control" placeholder="{{ LANG_STRINGS.PASSWORD }}" required />
+                        <label for="password">{{ LANG_STRINGS.PASSWORD }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input name="repeat_password" type="password" id="repeat_password" class="form-control" placeholder="repeat password" required />
-                        <label for="repeat_password">პაროლის გამეორება</label>
+                        <input name="repeat_password" type="password" id="repeat_password" class="form-control" placeholder="{{ LANG_STRINGS.REPEAT_PASSWORD }}" required />
+                        <label for="repeat_password">{{ LANG_STRINGS.REPEAT_PASSWORD }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input value="რეგისტრაციის დასრულება" type="submit" class="btn btn-primary" />
+                        <input value="{{ LANG_STRINGS.FINISH_REGISTRATION }}" type="submit" class="btn btn-primary" />
                     </div>
                 </form>
             </div>

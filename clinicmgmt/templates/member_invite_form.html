@@ -4,14 +4,14 @@
     <div class="container">
         <div class="d-flex justify-content-center">
             <div class="col-10 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4">
-                <h2>მომხმარებლის მოწვევა</h2>
+                <h2>{{ LANG_STRINGS.INVITE_USER }}</h2>
                 <form action="{{ url_for("user_management.member_invite_generate") }}" method="POST">
                     <div class="form-floating my-1">
                         <input name="email" type="email" id="email" class="form-control" placeholder="email" required />
-                        <label for="email">ელ-ფოსტა</label>
+                        <label for="email">{{ LANG_STRINGS.EMAIL }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input value="მოწვევის გენერირება" type="submit" class="btn btn-primary" />
+                        <input value="{{ LANG_STRINGS.GENERATE_INVITE }}" type="submit" class="btn btn-primary" />
                     </div>
                 </form>
             </div>

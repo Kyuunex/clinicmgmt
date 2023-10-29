@@ -4,14 +4,14 @@
     <div class="container">
         <div class="d-flex justify-content-center">
             <div class="col-8 col-sm-8 col-md-5 col-lg-4 col-xl-3 col-xxl-3">
-                <h2>კალენდარი</h2>
+                <h2>{{ LANG_STRINGS.CALENDAR }}</h2>
                 <form action="{{ url_for("schedule.index") }}" method="get" enctype="multipart/form-data">
                     <input type="hidden" name="timeframe" value="search">
 
                     <div class="input-group">
                             <input name="year_month" type="month" id="year_month" class="form-control" placeholder="" />
                             <label for="year_month"></label>
-                            <input type="submit" value="ნახვა" class="btn btn-primary" />
+                            <input type="submit" value="{{ LANG_STRINGS.OPEN }}" class="btn btn-primary" />
                     </div>
                 </form>
             </div>

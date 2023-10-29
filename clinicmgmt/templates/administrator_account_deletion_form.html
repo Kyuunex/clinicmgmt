@@ -4,22 +4,22 @@
     <div class="container">
         <div class="d-flex justify-content-center">
             <div class="col-8 col-sm-8 col-md-5 col-lg-4 col-xl-3 col-xxl-3">
-                <h2>ნამდვილად გსურთ ამ მომხმარებლის წაშლა?</h2>
+                <h2>{{ LANG_STRINGS.ARE_YOU_SURE_DELETE_USER }}</h2>
                 <form action="{{ url_for("user_management.administrator_account_deletion_attempt") }}" method="POST">
                     <div class="form-floating my-2">
                         <input name="user_id" type="text" id="user_id" class="form-control-plaintext" placeholder="UUID" value="{{ USER_ID }}" readonly />
                         <label for="user_id">UUID</label>
                     </div>
                     <div class="form-floating my-2">
-                        <input name="email" type="email" id="email" class="form-control-plaintext" placeholder="ელ-ფოსტა" value="{{ USER_EMAIL }}" readonly />
-                        <label for="email">ელ-ფოსტა</label>
+                        <input name="email" type="email" id="email" class="form-control-plaintext" placeholder="{{ LANG_STRINGS.EMAIL }}" value="{{ USER_EMAIL }}" readonly />
+                        <label for="email">{{ LANG_STRINGS.EMAIL }}</label>
                     </div>
                     <div class="form-floating my-2">
-                        <input name="user_id" type="text" id="user_id" class="form-control-plaintext" placeholder="სახელი" value="{{ USER_DISPLAY_NAME }}" readonly />
-                        <label for="user_id">სახელი</label>
+                        <input name="user_id" type="text" id="user_id" class="form-control-plaintext" placeholder="{{ LANG_STRINGS.NAME }}" value="{{ USER_DISPLAY_NAME }}" readonly />
+                        <label for="user_id">{{ LANG_STRINGS.NAME }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input value="წაშლა" type="submit" class="btn btn-danger" />
+                        <input value="{{ LANG_STRINGS.DELETE }}" type="submit" class="btn btn-danger" />
                     </div>
                 </form>
             </div>

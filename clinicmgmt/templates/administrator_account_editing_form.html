@@ -4,38 +4,38 @@
     <div class="container">
         <div class="d-flex justify-content-center">
             <div class="col-10 col-sm-10 col-md-6 col-lg-5 col-xl-4 col-xxl-4">
-                <h2>პროფილის რედაქტირება</h2>
+                <h2>{{ LANG_STRINGS.EDIT_PROFILE }}</h2>
                 <form action="{{ url_for("user_management.administrator_account_editing_attempt") }}" method="POST">
                     <div class="form-floating my-2">
                         <input name="user_id" type="text" id="user_id" class="form-control-plaintext" placeholder="UUID" value="{{ USER_ID }}" readonly />
                         <label for="user_id">UUID</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input name="email" type="email" id="email" class="form-control" placeholder="email" value="{{ USER_EMAIL }}" required />
-                        <label for="email">ელ-ფოსტა</label>
+                        <input name="email" type="email" id="email" class="form-control" placeholder="{{ LANG_STRINGS.EMAIL }}" value="{{ USER_EMAIL }}" required />
+                        <label for="email">{{ LANG_STRINGS.EMAIL }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input name="display_name" type="text" id="display_name" class="form-control" value="{{ USER_DISPLAY_NAME }}" placeholder="display name" required />
-                        <label for="display_name">სახელი/გვარი</label>
+                        <input name="display_name" type="text" id="display_name" class="form-control" value="{{ USER_DISPLAY_NAME }}" placeholder="{{ LANG_STRINGS.NAME_SLASH_SURNAME }}" required />
+                        <label for="display_name">{{ LANG_STRINGS.NAME_SLASH_SURNAME }}</label>
                     </div>
 
                     <div class="form-floating my-1">
                         <select class="form-select" name="is_approver" id="is_approver">
-                            <option value="1"{% if USER_IS_APPROVER == 1 %} selected{% endif %}>დიახ</option>
-                            <option value="0"{% if USER_IS_APPROVER == 0 %} selected{% endif %}>არა</option>
+                            <option value="1"{% if USER_IS_APPROVER == 1 %} selected{% endif %}>{{ LANG_STRINGS.YES }}</option>
+                            <option value="0"{% if USER_IS_APPROVER == 0 %} selected{% endif %}>{{ LANG_STRINGS.NO }}</option>
                         </select>
-                        <label for="is_approver">არის თანხმობის გამცემი</label>
+                        <label for="is_approver">{{ LANG_STRINGS.IS_APPROVER }}</label>
                     </div>
                     <div class="form-floating my-1">
                         <select class="form-select" name="is_administrator" id="is_administrator">
-                            <option value="1"{% if USER_IS_ADMINISTRATOR == 1 %} selected{% endif %}>დიახ</option>
-                            <option value="0"{% if USER_IS_ADMINISTRATOR == 0 %} selected{% endif %}>არა</option>
+                            <option value="1"{% if USER_IS_ADMINISTRATOR == 1 %} selected{% endif %}>{{ LANG_STRINGS.YES }}</option>
+                            <option value="0"{% if USER_IS_ADMINISTRATOR == 0 %} selected{% endif %}>{{ LANG_STRINGS.NO }}</option>
                         </select>
-                        <label for="is_administrator">არის ადმინისტრატორი</label>
+                        <label for="is_administrator">{{ LANG_STRINGS.IS_ADMINISTRATOR }}</label>
                     </div>
 
                     <div class="form-floating my-1">
-                        <input value="პროფილის განახლება" type="submit" class="btn btn-danger" />
+                        <input value="{{ LANG_STRINGS.UPDATE_PROFILE }}" type="submit" class="btn btn-danger" />
                     </div>
                 </form>
             </div>

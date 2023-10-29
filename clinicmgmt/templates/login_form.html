@@ -3,32 +3,31 @@
 {% block HTML_CONTENTS %}
     <div class="container">
         <div class="alert alert-warning">
-            შესვლის და რეგისტრაციის ფუნქციას ესაჭიროება cookie ჩანაწერების გამოყენება.
-            შესვლით ან დარეგისტრირებით თქვენ ეთანხმებით თქვენს ბრაუზერში cookie ჩანაწერების გამოყენებას.
-            <a href="{{ url_for("cookies") }}" class="alert-link">დამატებითი ინფორმაცია</a>
+            {{ LANG_STRINGS.LOGIN_REGISTRATION_REQUIRES_COOKIES }}
+            <a href="{{ url_for("cookies") }}" class="alert-link">{{ LANG_STRINGS.LEARN_MORE }}</a>
         </div>
         <div class="d-flex justify-content-center">
             <div class="col-8 col-sm-8 col-md-5 col-lg-4 col-xl-3 col-xxl-3">
                 <form action='{{ url_for("user_management.login_attempt") }}' method='POST'>
                     <div class="form-floating my-1">
-                        <input name='email' type="text" id="email" class="form-control" placeholder="enter your username here" required />
-                        <label for="email">ელ.ფოსტა</label>
+                        <input name='email' type="text" id="email" class="form-control" placeholder="{{ LANG_STRINGS.EMAIL }}" required />
+                        <label for="email">{{ LANG_STRINGS.EMAIL }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input name='password' type='password' id="password" class="form-control" placeholder="enter your password here" required />
-                        <label for="password">პაროლი</label>
+                        <input name='password' type='password' id="password" class="form-control" placeholder="{{ LANG_STRINGS.PASSWORD }}" required />
+                        <label for="password">{{ LANG_STRINGS.PASSWORD }}</label>
                     </div>
                     <div class="form-check my-2">
                         <input type='checkbox' name='remember_me' id="remember_me" value='1' class="form-check-input" />
-                        <label for="remember_me" class="form-check-lable">დამიმახსოვრე</label>
+                        <label for="remember_me" class="form-check-lable">{{ LANG_STRINGS.REMEMBER_ME }}</label>
                     </div>
                     <div class="form-floating my-1">
-                        <input value='შესვლა' type='submit' class="btn btn-primary" />
+                        <input value='{{ LANG_STRINGS.LOG_IN }}' type='submit' class="btn btn-primary" />
                     </div>
                 </form>
                 <div class="form-floating my-1">
                     {% if not IS_ANYONE_REGISTERED %}
-                        <a href='{{ url_for("user_management.registration_form") }}' class="btn btn-secondary">ანგარიშის რეგისტრაცია</a>
+                        <a href='{{ url_for("user_management.registration_form") }}' class="btn btn-secondary">{{ LANG_STRINGS.ACCOUNT_REGISTRATION }}</a>
                     {% endif %}
                 </div>
             </div>

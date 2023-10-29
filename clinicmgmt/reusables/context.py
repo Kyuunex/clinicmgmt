@@ -89,16 +89,30 @@ user_context_list = tuple(db_cursor.execute(
     "SELECT value FROM app_configuration WHERE setting = ?", ["title"])
 )
 
+language_to_use_db = tuple(db_cursor.execute(
+    "SELECT value FROM app_configuration WHERE setting = ?", ["language"])
+)
+
+if language_to_use_db:
+    language_to_use = language_to_use_db[0][0]
+else:
+    language_to_use = "en_US"
+
+if language_to_use == "ka_GE":
+    try:
+        locale.setlocale(locale.LC_TIME, 'ka_GE.utf8')
+    except locale.Error:
+        print("ქართული ენის locale არ არის გენერირებული ამ სისტემაზე! ინგლისური იქნება გამოყენებული")
+    from clinicmgmt.localization import ka_GE as LANG_STRINGS
+elif language_to_use == "en_US":
+    from clinicmgmt.localization import en_US as LANG_STRINGS
+else:
+    from clinicmgmt.localization import en_US as LANG_STRINGS
+
 if user_context_list:
     website_context["title"] = user_context_list[0][0]
 else:
-    website_context["title"] = "გარნრიგი"
+    website_context["title"] = LANG_STRINGS.SCHEDULE
 
 website_context["timezone_str"] = "+04:00"
 website_context["timezone"] = timezone(timedelta(seconds=14400))
-
-
-try:
-    locale.setlocale(locale.LC_TIME, 'ka_GE.utf8')
-except locale.Error:
-    print("ქართული ენის locale არ არის გენერირებული ამ სისტემაზე! ინგლისური იქნება გამოყენებული")

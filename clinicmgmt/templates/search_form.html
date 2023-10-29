@@ -2,50 +2,50 @@
 
 {% block HTML_CONTENTS %}
     <div class="container">
-        <h2>ძებნა</h2>
+        <h2>{{ LANG_STRINGS.SEARCH }}</h2>
         <p>
-            მოსაძებნად შეავსეთ მინიმუმ 1 ველი.
+            {{ LANG_STRINGS.TO_SEARCH_FILL_IN_MINIMUM_1_FIELD }}
         </p>
         <form action="{{ url_for("schedule.index", timeframe="search") }}" method="post" enctype="multipart/form-data">
 
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="სახელი/გვარი" />
-                    <label for="patient_name">სახელი/გვარი</label>
+                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="{{ LANG_STRINGS.NAME_SLASH_SURNAME }}" />
+                    <label for="patient_name">{{ LANG_STRINGS.NAME_SLASH_SURNAME }}</label>
                 </div>
                 <div class="form-floating mt-1">
-                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="დაბ. წელი" maxlength="4" />
-                    <label for="patient_birth_year">დაბ. წელი</label>
+                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="{{ LANG_STRINGS.BIRTH_YEAR_SHORT }}" maxlength="4" />
+                    <label for="patient_birth_year">{{ LANG_STRINGS.BIRTH_YEAR_SHORT }}</label>
                 </div>
             </div>
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="timestamp" type="date" id="timestamp" class="form-control" placeholder="თარიღი" />
-                    <label for="timestamp">თარიღი</label>
+                    <input name="timestamp" type="date" id="timestamp" class="form-control" placeholder="{{ LANG_STRINGS.DATE }}" />
+                    <label for="timestamp">{{ LANG_STRINGS.DATE }}</label>
                 </div>
                 <div class="form-floating my-1">
-                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="ტელ. ნომერი" />
-                    <label for="patient_phone_number">ტელ. ნომერი</label>
+                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="{{ LANG_STRINGS.PHONE_NUMBER_SHORT }}" />
+                    <label for="patient_phone_number">{{ LANG_STRINGS.PHONE_NUMBER_SHORT }}</label>
                 </div>
             </div>
             <div class="form-floating my-1">
-                <input name="assigned_doctor_name" type="text" id="assigned_doctor_name" class="form-control" placeholder="მკურნალი ექიმი" />
-                <label for="assigned_doctor_name">მკურნალი ექიმი</label>
+                <input name="assigned_doctor_name" type="text" id="assigned_doctor_name" class="form-control" placeholder="{{ LANG_STRINGS.TENDING_DOCTOR }}" />
+                <label for="assigned_doctor_name">{{ LANG_STRINGS.TENDING_DOCTOR }}</label>
             </div>
             <div class="form-floating my-1">
                 <select class="form-select" name="has_consultation_happened" id="has_consultation_happened">
-                    <option value="" selected>დიახ/არა</option>
-                    <option value="1">დიახ</option>
-                    <option value="0">არა</option>
+                    <option value="" selected>{{ LANG_STRINGS.YES_SLASH_NO }}</option>
+                    <option value="1">{{ LANG_STRINGS.YES }}</option>
+                    <option value="0">{{ LANG_STRINGS.NO }}</option>
                 </select>
-                <label for="is_completed">გაიარა კონსულტაცია</label>
+                <label for="has_consultation_happened">{{ LANG_STRINGS.HAS_COMPLETED_CONSULTATION }}</label>
             </div>
             <div class="form-floating my-1">
-                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="ოპერაციის ტიპი" />
-                <label for="type_of_surgery">ოპერაციის ტიპი</label>
+                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="{{ LANG_STRINGS.TYPE_OF_SURGERY }}" />
+                <label for="type_of_surgery">{{ LANG_STRINGS.TYPE_OF_SURGERY }}</label>
             </div>
             <div class="form-floating my-1">
-                <input type="submit" value="ძებნა" class="btn btn-primary" />
+                <input type="submit" value="{{ LANG_STRINGS.SEARCH }}" class="btn btn-primary" />
             </div>
         </form>
     </div>

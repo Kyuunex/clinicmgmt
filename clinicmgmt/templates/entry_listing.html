@@ -3,11 +3,11 @@
     <section class="bg-dark text-light py-3 mb-2">
             <div class="container">
                 {% if USER_CONTEXT %}
-                    <a href="{{ url_for("schedule.entry_maker_form") }}" class="btn btn-warning">ოპერაციის დამატება</a>
-                    <a href="{{ url_for("schedule.index_printable", **ARGS_TO_FORWARD) }}" class="btn btn-primary">ამოსაბეჭდი ვერსია</a>
-                    <a href="{{ url_for("schedule.search_form") }}" class="btn btn-info">ძებნა</a>
-                    <a href="{{ url_for("schedule.index", timeframe="all") }}" class="btn btn-danger">არქივი და მომავალი</a>
-                    <a href="{{ url_for("schedule.calendar_form") }}" class="btn btn-success">კალენდარი</a>
+                    <a href="{{ url_for("schedule.entry_maker_form") }}" class="btn btn-warning">{{ LANG_STRINGS.ADD_OPERATION}}</a>
+                    <a href="{{ url_for("schedule.index_printable", **ARGS_TO_FORWARD) }}" class="btn btn-primary">{{ LANG_STRINGS.PRINTABLE_VERSION }}</a>
+                    <a href="{{ url_for("schedule.search_form") }}" class="btn btn-info">{{ LANG_STRINGS.SEARCH}}</a>
+                    <a href="{{ url_for("schedule.index", timeframe="all") }}" class="btn btn-danger">{{ LANG_STRINGS.ARCHIVE_AND_FUTURE }}</a>
+                    <a href="{{ url_for("schedule.calendar_form") }}" class="btn btn-success">{{ LANG_STRINGS.CALENDAR}}</a>
                 {% endif %}
             </div>
     </section>

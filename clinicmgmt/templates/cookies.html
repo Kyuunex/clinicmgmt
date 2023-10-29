@@ -2,22 +2,19 @@
 
 {% block HTML_CONTENTS %}
     <div class="container">
-        <h1>cookies</h1>
-        <p>ეს ვებ-პორტალი იყენებს ქუქი-ჩანაწერებს, შესვლისა და რეგისტრაციის სისტემისთვის.<br>
-            თუ რომელიმე ამ ფუნქციას იყენებთ, თქვენ ეთანხმებით თქვენს ბრაუზერში ქუქი-ჩანაწერებს გამოყენებას.<br>
-            ევროკავშირის კანონმდებლობა მოითხოვს, რომ ეს ინფორმაცია მოგახსენოთ. <br>
-            ამ ტექსტის დაწერის დროს, საქართველო არ არის ევროკავშირში, მაგრამ სამომავლოდ თუ იქნება, ამის ჩასწორება არ მოგვიწევს.</p>
+        <h1>{{ LANG_STRINGS.COOKIES }}</h1>
+        <p>{{ LANG_STRINGS.LONG_COOKIE_JARGON }}</p>
 
         <table class="table">
             <tr>
-                <th>ქუქი-ჩანაწერი</th>
-                <th>დანიშნულება</th>
-                <th>აუცილებელია</th>
+                <th>{{ LANG_STRINGS.COOKIE_RECORD }}</th>
+                <th>{{ LANG_STRINGS.COOKIE_PURPOSE }}</th>
+                <th>{{ LANG_STRINGS.COOKIE_ESSENTIAL }}</th>
             </tr>
             <tr>
                 <td>session_token</td>
-                <td>მომხმარებლის ამოცნობა</td>
-                <td>დიახ</td>
+                <td>{{ LANG_STRINGS.IDENTIFY_THE_USER}}</td>
+                <td>{{ LANG_STRINGS.YES}}</td>
             </tr>
         </table>
     </div>

@@ -2,50 +2,50 @@
 
 {% block HTML_CONTENTS %}
     <div class="container">
-        <h2>ოპერაციის დამატება</h2>
+        <h2>{{ LANG_STRINGS.ADD_OPERATION }}</h2>
         <form action="{{ url_for("schedule.make_entry") }}" method="post" enctype="multipart/form-data">
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="სახელი/გვარი" required />
-                    <label for="patient_name">სახელი/გვარი</label>
+                    <input name="patient_name" type="text" id="patient_name" class="form-control" placeholder="{{ LANG_STRINGS.NAME_SLASH_SURNAME }}" required />
+                    <label for="patient_name">{{ LANG_STRINGS.NAME_SLASH_SURNAME }}</label>
                 </div>
                 <div class="form-floating mt-1">
-                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="დაბადების წელი" maxlength="4" />
-                    <label for="patient_birth_year">დაბ. წელი</label>
+                    <input name="patient_birth_year" type="text" id="patient_birth_year" class="form-control" placeholder="{{ LANG_STRINGS.BIRTH_YEAR_SHORT }}" maxlength="4" />
+                    <label for="patient_birth_year">{{ LANG_STRINGS.BIRTH_YEAR_SHORT }}</label>
                 </div>
             </div>
             <div class="input-group">
                 <div class="form-floating my-1">
-                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="თარიღი/დრო" required />
-                    <label for="timestamp">თარიღი/დრო</label>
+                    <input name="timestamp" type="datetime-local" id="timestamp" class="form-control" placeholder="{{ LANG_STRINGS.DATE_SLASH_TIME }}" required />
+                    <label for="timestamp">{{ LANG_STRINGS.DATE_SLASH_TIME }}</label>
                 </div>
                 <div class="form-floating my-1">
-                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="ტელ. ნომერი" />
-                    <label for="patient_phone_number">ტელ. ნომერი</label>
+                    <input name="patient_phone_number" type="text" id="patient_phone_number" class="form-control" placeholder="{{ LANG_STRINGS.PHONE_NUMBER_SHORT }}" />
+                    <label for="patient_phone_number">{{ LANG_STRINGS.PHONE_NUMBER_SHORT }}</label>
                 </div>
             </div>
             <div class="form-floating my-1">
-                <input name="assigned_doctor_name" type="text" id="assigned_doctor_name" class="form-control" placeholder="მკურნალი ექიმი" required />
-                <label for="assigned_doctor_name">მკურნალი ექიმი</label>
+                <input name="assigned_doctor_name" type="text" id="assigned_doctor_name" class="form-control" placeholder="{{ LANG_STRINGS.TENDING_DOCTOR }}" required />
+                <label for="assigned_doctor_name">{{ LANG_STRINGS.TENDING_DOCTOR }}</label>
             </div>
             <div class="form-floating my-1">
                 <select class="form-select" name="has_consultation_happened" id="has_consultation_happened">
-                    <option value="1">დიახ</option>
-                    <option value="0" selected>არა</option>
+                    <option value="1">{{ LANG_STRINGS.YES }}</option>
+                    <option value="0" selected>{{ LANG_STRINGS.NO }}</option>
                 </select>
-                <label for="is_completed">გაიარა კონსულტაცია</label>
+                <label for="has_consultation_happened">{{ LANG_STRINGS.HAS_COMPLETED_CONSULTATION }}</label>
             </div>
             <div class="form-floating my-1">
-                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="ოპერაციის ტიპი" value="საკეისრო" required />
-                <label for="type_of_surgery">ოპერაციის ტიპი</label>
+                <input name="type_of_surgery" type="text" id="type_of_surgery" class="form-control" placeholder="{{ LANG_STRINGS.TYPE_OF_SURGERY }}" value="{{ LANG_STRINGS.C_SECTION }}" required />
+                <label for="type_of_surgery">{{ LANG_STRINGS.TYPE_OF_SURGERY }}</label>
             </div>
             <div class="form-floating my-1">
-                <textarea rows="4" style="height:40%;" name="diagnosis" type="text" id="diagnosis" class="form-control" placeholder="დიაგნოზი" required></textarea>
-                <label for="diagnosis">დიაგნოზი</label>
+                <textarea rows="4" style="height:40%;" name="diagnosis" type="text" id="diagnosis" class="form-control" placeholder="{{ LANG_STRINGS.DIAGNOSIS }}" required></textarea>
+                <label for="diagnosis">{{ LANG_STRINGS.DIAGNOSIS }}</label>
             </div>
 
             <div class="form-floating my-1">
-                <input type="submit" value="დამატება" class="btn btn-primary" />
+                <input type="submit" value="{{ LANG_STRINGS.ADD }}" class="btn btn-primary" />
             </div>
         </form>
     </div>

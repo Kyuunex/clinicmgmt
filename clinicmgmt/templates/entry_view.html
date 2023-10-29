@@ -8,29 +8,29 @@
     <div class="container">
         {% if ENTRY.is_completed == 1 %}
             <div class='alert alert-success'>
-                ეს ოპერაცია აღნიშნულია შესრულებულად!
+                {{ LANG_STRINGS.THIS_OPERATION_IS_MARKED_AS_COMPLETED }}
             </div>
         {% endif %}
 
         <div class="entry_title">
             <h2>
-                პაციენტი: {{ ENTRY.patient_name }}
+                {{ LANG_STRINGS.PATIENT }}: {{ ENTRY.patient_name }}
             {% if ENTRY.patient_birth_year %}({{ ENTRY.patient_birth_year }}){% endif %}
             </h2>
         </div>
 
         {% if ENTRY.patient_phone_number %}
-            <p>ტელ.ნომერი {{ ENTRY.patient_phone_number }}</p>
+            <p>{{ LANG_STRINGS.PHONE_NUMBER_SHORT }} {{ ENTRY.patient_phone_number }}</p>
         {% endif %}
 
-        <p>ოპერაციის დრო: {{ ENTRY.scheduled_timestamp_str }}</p>
+        <p>{{ LANG_STRINGS.OPERATION_TIME }}: {{ ENTRY.scheduled_timestamp_str }}</p>
 
-        <p>მკურნალი ექიმი: {{ ENTRY.assigned_doctor_name }}</p>
+        <p>{{ LANG_STRINGS.TENDING_DOCTOR }}: {{ ENTRY.assigned_doctor_name }}</p>
 
         {% if ENTRY.has_consultation_happened == 1 %}
-            <p>კონსულტაცია ჩატარდა</p>
+            <p>{{ LANG_STRINGS.CONSULTATION_HAS_HAPPENED }}</p>
         {% else %}
-            <p>კონსულტაცია არ ჩატარდა ჯერ</p>
+            <p>{{ LANG_STRINGS.CONSULTATION_HAS_NOT_HAPPENED }}</p>
         {% endif %}
 
         <p>{{ ENTRY.type_of_surgery }}</p>
@@ -42,18 +42,18 @@
 
     <section class="bg-dark text-light py-2">
         <div class="container">
-        <h4>თანხმობები</h4>
+        <h4>{{ LANG_STRINGS.APPROVALS }}</h4>
             {% if USER_CONTEXT.is_approver == 1 %}
                 {% if ENTRY.current_user_has_approved == 1 %}
-                    <a href='{{ url_for("schedule.mark_entry_disapproved", entry_id=ENTRY.entry_id) }}' class="btn btn-warning mb-1">თანხმობის გაუქმება</a>
+                    <a href='{{ url_for("schedule.mark_entry_disapproved", entry_id=ENTRY.entry_id) }}' class="btn btn-warning mb-1">{{ LANG_STRINGS.RETRACT_APPROVAL }}</a>
                 {% else %}
-                    <a href='{{ url_for("schedule.mark_entry_approved", entry_id=ENTRY.entry_id) }}' class="btn btn-primary mb-1">თანხმობის გაცემა</a>
+                    <a href='{{ url_for("schedule.mark_entry_approved", entry_id=ENTRY.entry_id) }}' class="btn btn-primary mb-1">{{ LANG_STRINGS.GIVE_APPROVAL }}</a>
                 {% endif %}
             {% endif %}
 
             {% for APPROVER in ENTRY.approvers %}
                 <p>
-                    {{ APPROVER.display_name }} (გაცემულია {{ APPROVER.approval_timestamp_str }} დროს)
+                    {{ APPROVER.display_name }} ({{ LANG_STRINGS.DATE_GIVEN}}: {{ APPROVER.approval_timestamp_str }})
                 </p>
             {% endfor %}
         </div>
@@ -62,20 +62,20 @@
     <section class="bg-light text-dark py-2">
         <div class="container">
             {% if ENTRY.is_completed == 1 %}
-                <a href='{{ url_for("schedule.mark_entry_incomplete", entry_id=ENTRY.entry_id) }}' class="btn btn-warning">შეუსრულებლად მონიშვნა</a>
+                <a href='{{ url_for("schedule.mark_entry_incomplete", entry_id=ENTRY.entry_id) }}' class="btn btn-warning">{{ LANG_STRINGS.MARK_AS_INCOMPLETE }}</a>
             {% else %}
-                <a href='{{ url_for("schedule.mark_entry_completed", entry_id=ENTRY.entry_id) }}' class="btn btn-primary">შესრულებულად მონიშვნა</a>
+                <a href='{{ url_for("schedule.mark_entry_completed", entry_id=ENTRY.entry_id) }}' class="btn btn-primary">{{ LANG_STRINGS.MARK_AS_COMPLETED }}</a>
             {% endif %}
 
-            <a href='{{ url_for("schedule.entry_edit_form", entry_id=ENTRY.entry_id) }}' class="btn btn-secondary">რედაქტირება</a>
-            <a href='{{ url_for("schedule.delete_entry", entry_id=ENTRY.entry_id) }}' class="btn btn-danger">წაშლა</a>
+            <a href='{{ url_for("schedule.entry_edit_form", entry_id=ENTRY.entry_id) }}' class="btn btn-secondary">{{ LANG_STRINGS.EDIT }}</a>
+            <a href='{{ url_for("schedule.delete_entry", entry_id=ENTRY.entry_id) }}' class="btn btn-danger">{{ LANG_STRINGS.DELETE }}</a>
             <p>
-                მონაცემების ავტორი: <a href='{{ url_for("schedule.index", timeframe="search", author_id=ENTRY.author.id) }}' class="text-primary">
+                {{ LANG_STRINGS.INFORMATION_AUTHOR }}: <a href='{{ url_for("schedule.index", timeframe="search", author_id=ENTRY.author.id) }}' class="text-primary">
                 {{ ENTRY.author.display_name }}</a>
             </p>
-            <p>მონაცემების შეტანის დრო: {{ ENTRY.added_timestamp_str }}</p>
+            <p>{{ LANG_STRINGS.INFORMATION_ADDED_AT }}: {{ ENTRY.added_timestamp_str }}</p>
             {% if ENTRY.added_timestamp_timestamp_str != ENTRY.last_edited_timestamp_str %}
-                <p>მონაცემების ბოლო განახლების დრო: {{ ENTRY.last_edited_timestamp_str }}</p>
+                <p>{{ LANG_STRINGS.INFORMATION_LAST_UPDATED_AT }}: {{ ENTRY.last_edited_timestamp_str }}</p>
             {% endif %}
         </div>
     </section>

@@ -21,29 +21,29 @@
                 <div class="collapse navbar-collapse" id="nav-menu">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a href="{{ url_for("schedule.index") }}" class="nav-link">განრიგი</a>
+                            <a href="{{ url_for("schedule.index") }}" class="nav-link">{{ LANG_STRINGS.SCHEDULE }}</a>
                         </li>
                         {% if USER_CONTEXT %}
                             <!--li class="nav-item">
-                                <a href="{{ url_for("schedule.entry_maker_form") }}" class="nav-link">ოპერაციის დამატება</a>
+                                <a href="{{ url_for("schedule.entry_maker_form") }}" class="nav-link">{{ LANG_STRINGS.ADD_OPERATION }}</a>
                             </li-->
                             <li class="nav-item">
-                                <a href="{{ url_for("administration.user_listing") }}" class="nav-link">ექიმების სია</a>
+                                <a href="{{ url_for("administration.user_listing") }}" class="nav-link">{{ LANG_STRINGS.DOCTOR_LIST }}</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url_for("user_management.account_settings") }}" class="nav-link">ანგარიშის პარამეტრები</a>
+                                <a href="{{ url_for("user_management.account_settings") }}" class="nav-link">{{ LANG_STRINGS.ACCOUNT_SETTINGS }}</a>
                             </li>
                             {% if USER_CONTEXT.is_administrator == 1 %}
                                 <li class="nav-item">
-                                    <a href="{{ url_for("administration.admin") }}" class="nav-link">ადმინისტრაცია</a>
+                                    <a href="{{ url_for("administration.admin") }}" class="nav-link">{{ LANG_STRINGS.ADMINISTRATION }}</a>
                                 </li>
                             {% endif %}
                             <li class="nav-item">
-                                <a href="{{ url_for("user_management.logout") }}" class="nav-link">გასვლა</a>
+                                <a href="{{ url_for("user_management.logout") }}" class="nav-link">{{ LANG_STRINGS.LOG_OUT }}</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a href="{{ url_for("user_management.login_form") }}" class="nav-link">შესვლა</a>
+                                <a href="{{ url_for("user_management.login_form") }}" class="nav-link">{{ LANG_STRINGS.LOG_IN }}</a>
                             </li>
                         {% endif %}
                     </ul>
@@ -70,7 +70,7 @@
                     <span class="mb-3 mb-md-0 text-muted">
                         {% block FOOTER_CONTENTS %}
                             {% if USER_CONTEXT %}
-                                სისტემაში შესული როგორც: {{ USER_CONTEXT.display_name }}
+                                {{ LANG_STRINGS.LOGGED_IN_AS }}: {{ USER_CONTEXT.display_name }}
                             {% endif %}
                         {% endblock %}
                     </span>

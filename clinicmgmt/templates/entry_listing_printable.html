@@ -17,16 +17,16 @@
     <body>
 
         <h3>{{ TIMEFRAME_STR }}</h3>
-        <h6>ამობეჭდვის დრო: {{ PRINT_TIMESTAMP_STR }}</h6>
+        <h6>{{ LANG_STRINGS.PRINT_DATE }}: {{ PRINT_TIMESTAMP_STR }}</h6>
         <table>
             <tr>
-                <th>თარიღი</th>
-                <th>სახელი/გვარი</th>
-                <th>ტიპი</th>
-                <th>ექიმი</th>
-                <th>დიაგნოზი</th>
-                <th>შესრულებული</th>
-                <th>ტელ.</th>
+                <th>{{ LANG_STRINGS.DATE}}</th>
+                <th>{{ LANG_STRINGS.NAME_SLASH_SURNAME}}</th>
+                <th>{{ LANG_STRINGS.TYPE }}</th>
+                <th>{{ LANG_STRINGS.DOCTOR }}</th>
+                <th>{{ LANG_STRINGS.DIAGNOSIS}}</th>
+                <th>{{ LANG_STRINGS.COMPLETED}}</th>
+                <th>{{ LANG_STRINGS.PHONE_NUMBER_SHORTER}}</th>
             </tr>
             {% for ENTRY in ENTRIES %}
                 <tr>

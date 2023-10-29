@@ -3,9 +3,9 @@
 {% block HTML_CONTENTS %}
     <div class="container">
 
-        <h1>ადმინისტრაცია</h1>
-        <a href="{{ url_for("administration.sql_form") }}" class="btn btn-primary my-1">SQL კონსოლი</a><br>
-        <a href="{{ url_for("administration.user_listing") }}" class="btn btn-primary my-1">დარეგისტრირებული მომხმარებლების სია</a>
+        <h1>{{ LANG_STRINGS.ADMINISTRATION }}</h1>
+        <a href="{{ url_for("administration.sql_form") }}" class="btn btn-primary my-1">{{ LANG_STRINGS.SQL_CONSOLE }}</a><br>
+        <a href="{{ url_for("administration.user_listing") }}" class="btn btn-primary my-1">{{ LANG_STRINGS.REGISTERED_USER_LIST }}</a>
 
     </div>
 {% endblock %}

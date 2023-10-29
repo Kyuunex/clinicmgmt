@@ -7,6 +7,7 @@ from flask import Blueprint, request, make_response, redirect, url_for, render_t
 from clinicmgmt.reusables.context import db_cursor
 from clinicmgmt.reusables.context import db_connection
 from clinicmgmt.reusables.context import website_context
+from clinicmgmt.reusables.context import LANG_STRINGS
 from clinicmgmt.reusables.user_validation import get_user_context
 
 from clinicmgmt.classes.Entry import Entry
@@ -24,7 +25,7 @@ def index():
         return redirect(url_for("user_management.login_form"))
 
     timeframe = request.args.get('timeframe', "72hour")
-    timeframe_str = "ოპერაციები"
+    timeframe_str = LANG_STRINGS.OPERATIONS
 
     if request.method == 'POST':
         args_to_forward = request.form.to_dict()
@@ -103,9 +104,9 @@ def index():
 
         timeframe_str = f"{start_timestamp_str} - {end_timestamp_str}"
     elif timeframe == "all":
-        timeframe_str = "არქივი და მომავალი"
+        timeframe_str = LANG_STRINGS.ARCHIVE_AND_FUTURE
     else:
-        timeframe_str = "ძებნის შედეგები"
+        timeframe_str = LANG_STRINGS.SEARCH_RESULTS
 
         if len(html_timestamp) > 0:
             where_conditions.append("scheduled_timestamp > ?")
@@ -188,7 +189,8 @@ def index():
                 USER_CONTEXT=user_context,
                 ENTRIES=entries,
                 TIMEFRAME_STR=timeframe_str,
-                PRINT_TIMESTAMP_STR=print_timestamp_str
+                PRINT_TIMESTAMP_STR=print_timestamp_str,
+                LANG_STRINGS=LANG_STRINGS
             )
         )
     else:
@@ -199,7 +201,8 @@ def index():
                 USER_CONTEXT=user_context,
                 ENTRIES=entries,
                 TIMEFRAME_STR=timeframe_str,
-                ARGS_TO_FORWARD=args_to_forward
+                ARGS_TO_FORWARD=args_to_forward,
+                LANG_STRINGS=LANG_STRINGS
             )
         )
 
@@ -210,7 +213,12 @@ def entry_maker_form():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    return render_template("entry_maker_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+    return render_template(
+        "entry_maker_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        LANG_STRINGS=LANG_STRINGS
+    )
 
 
 @schedule.route('/make_entry', methods=['POST'])
@@ -232,7 +240,7 @@ def make_entry():
 
         if len(patient_birth_year) > 0:
             if not patient_birth_year.isdigit():
-                return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
+                return LANG_STRINGS.BIRTH_YEAR_MUST_BE_ONLY_4_DIGITS
         else:
             patient_birth_year = None
 
@@ -269,7 +277,7 @@ def entry_view(entry_id):
                           "diagnosis, patient_birth_year, patient_phone_number, has_consultation_happened, "
                           "is_completed FROM patient_entries WHERE id = ? ", [entry_id]))
     if not entry_db_lookup:
-        return "ჩანაწერი ვერ მოიძებნა. შეიძლება ადრე იყო და მერე წაშალა ვინმემ."
+        return LANG_STRINGS.RECORD_NOT_FOUND_PROBABLY_DELETED
 
     entry = Entry(entry_db_lookup[0])
     entry_author = tuple(
@@ -303,7 +311,7 @@ def entry_view(entry_id):
         if entry_approver_db:
             entry.approvers.append(Approver(entry_approver_db[0], entry_approvals[1]))
         else:
-            entry.approvers.append(Approver([entry_approver_db[0], "წაშლილი მომხმარებელი"], entry_approvals[1]))
+            entry.approvers.append(Approver([entry_approver_db[0], LANG_STRINGS.DELETED_USER], entry_approvals[1]))
 
         if entry_approvals[0] == user_context.id:
             entry.current_user_has_approved = 1
@@ -312,7 +320,8 @@ def entry_view(entry_id):
         "entry_view.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        ENTRY=entry
+        ENTRY=entry,
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -329,7 +338,7 @@ def entry_edit_form(entry_id):
                           "is_completed FROM patient_entries WHERE id = ?", [entry_id]))
 
     if not entry_db_lookup:
-        return "ჩანაწერი ვერ მოიძებნა. შეიძლება ადრე იყო და მერე წაშალა ვინმემ."
+        return LANG_STRINGS.RECORD_NOT_FOUND_PROBABLY_DELETED
 
     entry = Entry(entry_db_lookup[0])
 
@@ -337,7 +346,8 @@ def entry_edit_form(entry_id):
         "entry_edit_form.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        ENTRY=entry
+        ENTRY=entry,
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -372,7 +382,7 @@ def edit_entry(entry_id):
 
         if len(patient_birth_year) > 0:
             if not patient_birth_year.isdigit():
-                return "დაბადების წელი უნდა იყოს 4 რიცხვა ციფრი"
+                return LANG_STRINGS.BIRTH_YEAR_MUST_BE_ONLY_4_DIGITS
         else:
             patient_birth_year = None
 
@@ -429,14 +439,14 @@ def mark_entry_approved(entry_id):
     if not user_context:
         return redirect(url_for("user_management.login_form"))
     if not user_context.is_approver == 1:
-        return "თქვენ არ შეგიძლიათ თანხმობის გაცემა"
+        return LANG_STRINGS.YOU_DO_NOT_HAVE_PERMISSIONS_TO_GIVE_APPROVALS
 
     already_approved = tuple(db_cursor.execute("SELECT patient_id FROM patient_doctor_approvals "
                                                "WHERE patient_id = ? AND approver_author_id = ?",
                                                [str(entry_id), str(user_context.id)]))
 
     if already_approved:
-        return "თქვენ უკვე გაეცით თანხმობა ამ პაციენტზე."
+        return LANG_STRINGS.YOU_ALREADY_APPROVED_THIS_PATIENT
 
     db_cursor.execute("INSERT INTO patient_doctor_approvals (patient_id, approver_author_id, approval_timestamp) "
                       "VALUES (?, ?, ?)", [str(entry_id), str(user_context.id), int(time.time())])
@@ -453,7 +463,7 @@ def mark_entry_disapproved(entry_id):
     if not user_context:
         return redirect(url_for("user_management.login_form"))
     if not user_context.is_approver == 1:
-        return "თქვენ არ შეგიძლიათ თანხმობის გაქუმება"
+        return LANG_STRINGS.YOU_DO_NOT_HAVE_PERMISSIONS_TO_DELETE_APPROVALS
 
     db_cursor.execute("DELETE FROM patient_doctor_approvals WHERE patient_id = ? AND approver_author_id = ?",
                       [str(entry_id), str(user_context.id)])
@@ -470,7 +480,12 @@ def search_form():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    return render_template("search_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+    return render_template(
+        "search_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        LANG_STRINGS=LANG_STRINGS
+    )
 
 
 @schedule.route('/calendar_form')
@@ -479,4 +494,9 @@ def calendar_form():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    return render_template("calendar_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+    return render_template(
+        "calendar_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        LANG_STRINGS=LANG_STRINGS
+    )

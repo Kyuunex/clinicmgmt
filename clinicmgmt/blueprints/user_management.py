@@ -11,6 +11,7 @@ from clinicmgmt.reusables.iptools import ip_decode
 from clinicmgmt.reusables.context import db_cursor
 from clinicmgmt.reusables.context import db_connection
 from clinicmgmt.reusables.context import website_context
+from clinicmgmt.reusables.context import LANG_STRINGS
 from clinicmgmt.reusables.user_validation import get_user_context
 from clinicmgmt.reusables.user_validation import validate_user_credentials
 
@@ -27,7 +28,12 @@ def account_settings():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    return render_template("account_settings.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+    return render_template(
+        "account_settings.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        LANG_STRINGS=LANG_STRINGS
+    )
 
 
 @user_management.route('/login_form')
@@ -38,8 +44,12 @@ def login_form():
 
     is_anyone_registered = tuple(db_cursor.execute("SELECT id FROM users"))
 
-    return render_template("login_form.html", WEBSITE_CONTEXT=website_context,
-                           IS_ANYONE_REGISTERED=is_anyone_registered)
+    return render_template(
+        "login_form.html",
+        WEBSITE_CONTEXT=website_context,
+        IS_ANYONE_REGISTERED=is_anyone_registered,
+        LANG_STRINGS=LANG_STRINGS
+    )
 
 
 @user_management.route('/registration_form')
@@ -55,16 +65,21 @@ def registration_form():
                                                       "WHERE invite_code = ? AND expiry_timestamp > ?",
                                                       [invite_code, int(time.time())]))
             if not invite_db_query:
-                return "მოწვევის კოდი არასწორია."
+                return LANG_STRINGS.INVITE_CODE_IS_INVALID
 
         if not invite_db_query:
-            return "მოწვევის კოდი აუცილებელია დასარეგისტრირებლად. გთხოვთ მიმართოთ ადმინისტრატორს."
+            return LANG_STRINGS.INVITE_CODE_REQUIRED_CONTACT_ADMIN
 
     user_context = get_user_context()
     if user_context:
         return redirect(url_for("schedule.index"))
 
-    return render_template("registration_form.html", WEBSITE_CONTEXT=website_context, INVITE_CODE=invite_code)
+    return render_template(
+        "registration_form.html",
+        WEBSITE_CONTEXT=website_context,
+        INVITE_CODE=invite_code,
+        LANG_STRINGS=LANG_STRINGS
+    )
 
 
 @user_management.route('/login_attempt', methods=['POST'])
@@ -80,8 +95,9 @@ def login_attempt():
             return render_template(
                 "login_form.html",
                 WEBSITE_CONTEXT=website_context,
-                NOTICE_MESSAGE="არასწორი ელ.ფოსტა ან პაროლი არის მითითებული",
-                ALERT_TYPE="alert-danger"
+                NOTICE_MESSAGE=LANG_STRINGS.WRONG_EMAIL_OR_PASSWORD,
+                ALERT_TYPE="alert-danger",
+                LANG_STRINGS=LANG_STRINGS
             )
 
         new_session_token = get_random_string(32)
@@ -125,7 +141,7 @@ def registration_attempt():
 
         if not validate_invite:
             if is_anyone_registered:
-                return "დასარეგისტრირებლად გთხოვთ მიმართოთ ადმინისტრატორს."
+                return LANG_STRINGS.TO_REGISTER_CONTACT_ADMIN
 
         display_name = request.form['display_name']
 
@@ -133,7 +149,7 @@ def registration_attempt():
         repeat_password = request.form['repeat_password']
 
         if not password == repeat_password:
-            return "პაროლები არ ემთხვევა, ცადეთ რეგისტრაცია ახლიდან."
+            return LANG_STRINGS.PASSWORDS_DONT_MATCH_TRY_REGISTRATION_AGAIN
 
         password_salt = get_random_string(32)
 
@@ -150,7 +166,7 @@ def registration_attempt():
                                                       [email.strip().lower()]))
 
         if email_already_taken:
-            return "ამ ელ.ფოსტით უკვე არის დარეგისტრირებული მომხმარებელი. თუ ვერ შედიხართ, მიმართეთ ადმინისტრატორს."
+            return LANG_STRINGS.EMAIL_ALREADY_TAKEN_CONTACT_ADMIN_FOR_HELP
 
         user_id = uuid.uuid4()
 
@@ -214,7 +230,8 @@ def session_listing_page():
         SESSION_LISTING=session_listing,
         datetime=datetime,
         ipaddress=ipaddress,
-        timezone=timezone
+        timezone=timezone,
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -238,7 +255,12 @@ def change_password_form():
     if not user_context:
         return redirect(url_for("user_management.login_form"))
 
-    return render_template("password_change_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+    return render_template(
+        "password_change_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        LANG_STRINGS=LANG_STRINGS
+    )
 
 
 @user_management.route('/change_password_attempt', methods=['POST'])
@@ -256,15 +278,16 @@ def change_password_attempt():
             "account_settings.html",
             WEBSITE_CONTEXT=website_context,
             USER_CONTEXT=user_context,
-            NOTICE_MESSAGE="ახალი პაროლები არ ემთხვევა",
-            ALERT_TYPE="alert-danger"
+            NOTICE_MESSAGE=LANG_STRINGS.NEW_PASSWORDS_DONT_MATCH,
+            ALERT_TYPE="alert-danger",
+            LANG_STRINGS=LANG_STRINGS
         )
 
     old_password_salt_db = tuple(db_cursor.execute("SELECT password_salt FROM user_passwords WHERE user_id = ?",
                                                    [user_context.id]))
     if not old_password_salt_db:
         # This should never happen
-        return "გაუგებარი შეცდომა მოხდა."
+        return LANG_STRINGS.UNKNOWN_ERROR_HAS_OCCURRED
 
     old_password_salt = old_password_salt_db[0][0]
 
@@ -277,8 +300,9 @@ def change_password_attempt():
             "account_settings.html",
             WEBSITE_CONTEXT=website_context,
             USER_CONTEXT=user_context,
-            NOTICE_MESSAGE="ძველი პაროლი არის არასწორად შეყვანილი",
-            ALERT_TYPE="alert-danger"
+            NOTICE_MESSAGE=LANG_STRINGS.OLD_PASSWORD_IS_INCORRECT,
+            ALERT_TYPE="alert-danger",
+            LANG_STRINGS=LANG_STRINGS
         )
 
     db_cursor.execute("DELETE FROM user_passwords WHERE user_id = ? AND password_hash = ? AND password_salt = ?",
@@ -296,8 +320,9 @@ def change_password_attempt():
         "account_settings.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        NOTICE_MESSAGE="პაროლი შეიცვალა წარმატებულად!",
-        ALERT_TYPE="alert-success"
+        NOTICE_MESSAGE=LANG_STRINGS.PASSWORD_CHANGED_SUCCESSFULLY,
+        ALERT_TYPE="alert-success",
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -308,9 +333,14 @@ def member_invite_form():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
-    return render_template("member_invite_form.html", WEBSITE_CONTEXT=website_context, USER_CONTEXT=user_context)
+    return render_template(
+        "member_invite_form.html",
+        WEBSITE_CONTEXT=website_context,
+        USER_CONTEXT=user_context,
+        LANG_STRINGS=LANG_STRINGS
+    )
 
 
 @user_management.route('/member_invite_generate', methods=['POST'])
@@ -320,7 +350,7 @@ def member_invite_generate():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     invitee_email = request.form['email']
 
@@ -351,11 +381,13 @@ def member_invite_generate():
         "invitee_listing.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        NOTICE_MESSAGE=f"მოწვევა მომხმარებლისთვის: {invitee_email} შეიქმნა! "
-                       f"გადაუგზავნეთ შემდეგი ლინქი: \n"
-                       f"{request.host_url[:-1] + url_for('user_management.registration_form', invite_code=invite_code)}",
+        NOTICE_MESSAGE=LANG_STRINGS.INVITE_CREATED_MESSAGE % (
+            invitee_email,
+            request.host_url[:-1] + url_for('user_management.registration_form', invite_code=invite_code)
+        ),
         ALERT_TYPE="alert-success",
-        INVITE_LISTING=invite_listing
+        INVITE_LISTING=invite_listing,
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -366,7 +398,7 @@ def member_invite_listing():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     invite_listing_db = tuple(db_cursor.execute("SELECT invite_code, invitee_email, inviter_id, "
                                                 "generation_timestamp, expiry_timestamp "
@@ -387,7 +419,8 @@ def member_invite_listing():
         "invitee_listing.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        INVITE_LISTING=invite_listing
+        INVITE_LISTING=invite_listing,
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -398,7 +431,7 @@ def destroy_invite():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     invite_code = request.args.get('invite_code')
 
@@ -409,9 +442,10 @@ def destroy_invite():
         "invitee_listing.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        NOTICE_MESSAGE=f"მოწვევა გაუქმებულია!",
+        NOTICE_MESSAGE=LANG_STRINGS.INVITE_HAS_BEEN_DELETED,
         ALERT_TYPE="alert-success",
-        INVITE_LISTING=[]
+        INVITE_LISTING=[],
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -422,7 +456,7 @@ def administrator_password_recovery_form():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     user_id = request.args.get('user_id')
     user_lookup_db = tuple(db_cursor.execute("SELECT email, display_name, is_administrator FROM users WHERE id = ?", [user_id]))
@@ -430,7 +464,7 @@ def administrator_password_recovery_form():
         return "you are using this endpoint incorrectly"
 
     if bool(user_lookup_db[0][2]):
-        return "ადმინისტრატორის ანგარიშის პაროლი არ აღდგება სხვა ადმინისტრატორის მიერ, უსაფრთხოების მიზნით."
+        return LANG_STRINGS.ADMIN_CANT_RECOVER_OTHER_ADMIN_ACCOUNT
 
     return render_template(
         "administrator_password_recovery_form.html",
@@ -438,7 +472,8 @@ def administrator_password_recovery_form():
         USER_CONTEXT=user_context,
         USER_ID=user_id,
         USER_EMAIL=user_lookup_db[0][0],
-        USER_DISPLAY_NAME=user_lookup_db[0][1]
+        USER_DISPLAY_NAME=user_lookup_db[0][1],
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -449,7 +484,7 @@ def administrator_password_recovery_attempt():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     user_id = request.form['user_id']
     new_password = request.form['new_password']
@@ -460,8 +495,9 @@ def administrator_password_recovery_attempt():
             "account_settings.html",
             WEBSITE_CONTEXT=website_context,
             USER_CONTEXT=user_context,
-            NOTICE_MESSAGE="ახალი პაროლები არ ემთხვევა",
-            ALERT_TYPE="alert-danger"
+            NOTICE_MESSAGE=LANG_STRINGS.NEW_PASSWORDS_DONT_MATCH,
+            ALERT_TYPE="alert-danger",
+            LANG_STRINGS=LANG_STRINGS
         )
 
     db_cursor.execute("DELETE FROM user_passwords WHERE user_id = ?",
@@ -479,8 +515,9 @@ def administrator_password_recovery_attempt():
         "admin_panel.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        NOTICE_MESSAGE="პაროლი შეიცვალა წარმატებულად!",
-        ALERT_TYPE="alert-success"
+        NOTICE_MESSAGE=LANG_STRINGS.PASSWORD_CHANGED_SUCCESSFULLY,
+        ALERT_TYPE="alert-success",
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -491,7 +528,7 @@ def administrator_account_deletion_form():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     user_id = request.args.get('user_id')
     user_lookup_db = tuple(db_cursor.execute("SELECT email, display_name, is_administrator FROM users WHERE id = ?", [user_id]))
@@ -499,7 +536,7 @@ def administrator_account_deletion_form():
         return "you are using this endpoint incorrectly"
 
     if bool(user_lookup_db[0][2]):
-        return "ადმინისტრატორის ანგარიში არ იშლება, სხვა ადმინისტრატორის მიერ, უსაფრთხოების მიზნით."
+        return LANG_STRINGS.ADMIN_CANT_DELETE_ANOTHER_ADMIN_ACCOUNT
 
     return render_template(
         "administrator_account_deletion_form.html",
@@ -507,7 +544,8 @@ def administrator_account_deletion_form():
         USER_CONTEXT=user_context,
         USER_ID=user_id,
         USER_EMAIL=user_lookup_db[0][0],
-        USER_DISPLAY_NAME=user_lookup_db[0][1]
+        USER_DISPLAY_NAME=user_lookup_db[0][1],
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -518,7 +556,7 @@ def administrator_account_deletion_attempt():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     user_id = request.form['user_id']
 
@@ -530,8 +568,9 @@ def administrator_account_deletion_attempt():
         "admin_panel.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        NOTICE_MESSAGE="მომხმარებელი წარმატებით წაიშალა!",
-        ALERT_TYPE="alert-success"
+        NOTICE_MESSAGE=LANG_STRINGS.USER_DELETED_SUCCESSFULLY,
+        ALERT_TYPE="alert-success",
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -542,7 +581,7 @@ def administrator_account_editing_form():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     user_id = request.args.get('user_id')
     user_lookup_db = tuple(db_cursor.execute("SELECT email, display_name, is_administrator, is_approver "
@@ -559,6 +598,7 @@ def administrator_account_editing_form():
         USER_DISPLAY_NAME=user_lookup_db[0][1],
         USER_IS_ADMINISTRATOR=user_lookup_db[0][2],
         USER_IS_APPROVER=user_lookup_db[0][3],
+        LANG_STRINGS=LANG_STRINGS
     )
 
 
@@ -569,7 +609,7 @@ def administrator_account_editing_attempt():
         return redirect(url_for("user_management.login_form"))
 
     if not user_context.is_administrator == 1:
-        return "ამის უფლება მხოლოდ ადმინისტრატორს აქვს."
+        return LANG_STRINGS.ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS
 
     user_id = request.form['user_id']
     email = request.form['email']
@@ -587,6 +627,7 @@ def administrator_account_editing_attempt():
         "admin_panel.html",
         WEBSITE_CONTEXT=website_context,
         USER_CONTEXT=user_context,
-        NOTICE_MESSAGE="მომხმარებელი წარმატებულად განახლდა!",
-        ALERT_TYPE="alert-success"
+        NOTICE_MESSAGE=LANG_STRINGS.USER_SUCCESSFULLY_UPDATED,
+        ALERT_TYPE="alert-success",
+        LANG_STRINGS=LANG_STRINGS
     )

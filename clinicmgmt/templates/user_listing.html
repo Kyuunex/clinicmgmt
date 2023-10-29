@@ -4,8 +4,8 @@
     {% if USER_CONTEXT.is_administrator == 1 %}
         <section class="bg-dark text-light py-3 mb-2">
             <div class="container">
-                <a href="{{ url_for("user_management.member_invite_form") }}" class="btn btn-warning">მომხმარებლის მოწვევა</a>
-                <a href="{{ url_for("user_management.member_invite_listing") }}" class="btn btn-info">მოწვეული მომხმარებლების სია</a>
+                <a href="{{ url_for("user_management.member_invite_form") }}" class="btn btn-warning">{{ LANG_STRINGS.INVITE_USER }}</a>
+                <a href="{{ url_for("user_management.member_invite_listing") }}" class="btn btn-info">{{ LANG_STRINGS.INVITED_USER_LIST }}</a>
             </div>
         </section>
     {% endif %}
@@ -20,17 +20,17 @@
                             <h5 class="card-title">{{ info[2] }}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">{{ info[1] }}</h6>
                             {% if info[3] == 1 %}
-                                <strong class="card-text">ადმინისტრატორი</strong>
+                                <strong class="card-text">{{ LANG_STRINGS.ADMINISTRATOR }}</strong><br>
                             {% endif %}
-                            <a href="{{ url_for("schedule.index", timeframe="search", author_id=info[0]) }}" class="btn btn-primary mt-2">დამატებული ოპერაციები</a>
-                            <a href="{{ url_for("schedule.index", timeframe="search", assigned_doctor_name=info[2]) }}" class="btn btn-primary mt-2">მიბმული პაციენტები</a>
+                            <a href="{{ url_for("schedule.index", timeframe="search", author_id=info[0]) }}" class="btn btn-primary mt-2">{{ LANG_STRINGS.ADDED_OPERATIONS }}</a>
+                            <a href="{{ url_for("schedule.index", timeframe="search", assigned_doctor_name=info[2]) }}" class="btn btn-primary mt-2">{{ LANG_STRINGS.LINKED_OPERATIONS }}</a>
                             {% if USER_CONTEXT.is_administrator == 1 %}
                                 <a href="{{ url_for("user_management.administrator_password_recovery_form", user_id=info[0]) }}"
-                                   class="btn btn-danger mt-2">პაროლის შეცვლა</a>
+                                   class="btn btn-danger mt-2">{{ LANG_STRINGS.CHANGE_PASSWORD }}</a>
                                 <a href="{{ url_for("user_management.administrator_account_editing_form", user_id=info[0]) }}"
-                                   class="btn btn-danger mt-2">პროფილის რედაქტირება</a>
+                                   class="btn btn-danger mt-2">{{ LANG_STRINGS.EDIT_PROFILE }}</a>
                                 <a href="{{ url_for("user_management.administrator_account_deletion_form", user_id=info[0]) }}"
-                                   class="btn btn-danger mt-2">გაუქმება</a>
+                                   class="btn btn-danger mt-2">{{ LANG_STRINGS.DELETE_ACCOUNT }}</a>
                             {% endif %}
                         </div>
                         {% if USER_CONTEXT.is_administrator == 1 %}
