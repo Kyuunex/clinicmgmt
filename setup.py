@@ -11,7 +11,7 @@ setup(
     ],
     include_package_data=True,
     package_data={'clinicmgmt': ['static/*', 'templates/*']},
-    version="2023.10.29",
+    version="2024.1.31",
     install_requires=[
         'Flask==3.0.0',
     ],
