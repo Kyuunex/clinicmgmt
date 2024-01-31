@@ -3,6 +3,7 @@ from flask import request
 import hashlib
 
 from clinicmgmt.reusables.context import db_cursor
+from clinicmgmt.reusables.context import DEMO_MODE
 
 
 class CurrentUser:
@@ -35,6 +36,17 @@ def validate_user_credentials(email, password):
         return str(db_query[0][0])
 
     return None
+
+
+def validate_demo_account(invite):
+    if not DEMO_MODE:
+        return
+
+    user_id = tuple(db_cursor.execute("SELECT user_id FROM demo_accounts WHERE invite = ?", [invite]))
+    if not user_id:
+        return None
+
+    return str(user_id[0][0])
 
 
 def validate_session(session_token):

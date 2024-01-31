@@ -82,6 +82,12 @@ db_cursor.execute("""
             "value"    TEXT NOT NULL
         )
 """)
+db_cursor.execute("""
+        CREATE TABLE IF NOT EXISTS "demo_accounts" (
+            "user_id"    TEXT NOT NULL UNIQUE,
+            "invite"    TEXT NOT NULL UNIQUE
+        )
+""")
 db_connection.commit()
 
 website_context = {}
@@ -96,6 +102,10 @@ language_to_use_db = tuple(db_cursor.execute(
 
 timezone_str_db = tuple(db_cursor.execute(
     "SELECT value FROM app_configuration WHERE setting = ?", ["timezone_str"])
+)
+
+demo_mode_db = tuple(db_cursor.execute(
+    "SELECT value FROM app_configuration WHERE setting = ?", ["demo_mode"])
 )
 
 if language_to_use_db:
@@ -123,6 +133,11 @@ if user_context_list:
     website_context["title"] = user_context_list[0][0]
 else:
     website_context["title"] = LANG_STRINGS.SCHEDULE
+
+if demo_mode_db:
+    DEMO_MODE = bool(demo_mode_db[0][0])
+else:
+    DEMO_MODE = False
 
 website_context["timezone_str"] = timezone_str
 website_context["timezone"] = timezone(timedelta(seconds=str_to_seconds(timezone_str)))

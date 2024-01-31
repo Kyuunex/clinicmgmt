@@ -12,8 +12,10 @@ from clinicmgmt.reusables.context import db_cursor
 from clinicmgmt.reusables.context import db_connection
 from clinicmgmt.reusables.context import website_context
 from clinicmgmt.reusables.context import LANG_STRINGS
+from clinicmgmt.reusables.context import DEMO_MODE
 from clinicmgmt.reusables.user_validation import get_user_context
 from clinicmgmt.reusables.user_validation import validate_user_credentials
+from clinicmgmt.reusables.user_validation import validate_demo_account
 
 from clinicmgmt.classes.Invite import Invite
 from clinicmgmt.classes.InviteAuthor import InviteAuthor
@@ -636,3 +638,43 @@ def administrator_account_editing_attempt():
         ALERT_TYPE="alert-success",
         LANG_STRINGS=LANG_STRINGS
     )
+
+
+@user_management.route('/demo_login', methods=['GET'])
+def demo_login():
+    if not DEMO_MODE:
+        return redirect(url_for("schedule.index"))
+
+    if get_user_context():
+        return redirect(url_for("schedule.index"))
+
+    invite = request.args.get('invite', None)
+
+    user_id = validate_demo_account(invite)
+    if not user_id:
+        return render_template(
+            "login_form.html",
+            WEBSITE_CONTEXT=website_context,
+            NOTICE_MESSAGE=LANG_STRINGS.INVALID_DEMO_TOKEN,
+            ALERT_TYPE="alert-danger",
+            LANG_STRINGS=LANG_STRINGS
+        )
+
+    new_session_token = get_random_string(32)
+    resp = make_response(redirect(url_for("schedule.index")))
+
+    cookie_age = 604800
+    expiry_timestamp = int(time.time()) + cookie_age
+
+    resp.set_cookie('session_token', new_session_token, max_age=cookie_age)
+
+    hashed_token = hashlib.sha256(new_session_token.encode()).hexdigest()
+    client_ip_address_is_ipv6, client_ip_address_int = ip_decode(request)
+    token_id = uuid.uuid4()
+
+    db_cursor.execute("INSERT INTO session_tokens VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                      [str(user_id), str(token_id), hashed_token,
+                       int(time.time()), expiry_timestamp, str(request.user_agent.string),
+                       int(client_ip_address_int), int(client_ip_address_is_ipv6)])
+    db_connection.commit()
+    return resp

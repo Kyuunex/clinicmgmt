@@ -13,6 +13,7 @@ ONLY_ADMINISTRATOR_HAS_THE_PERMISSIONS_TO_DO_THIS = "Only administrator has the 
 INVITE_CODE_IS_INVALID = "Invite code is invalid"
 INVITE_CODE_REQUIRED_CONTACT_ADMIN = "Invite code is required for registration. Please contact you administrator."
 WRONG_EMAIL_OR_PASSWORD = "Wrong E-mail or password"
+INVALID_DEMO_TOKEN = "Invalid or expired demo token"
 TO_REGISTER_CONTACT_ADMIN = "Please contact your administrator to register"
 PASSWORDS_DONT_MATCH_TRY_REGISTRATION_AGAIN = "Passwords don't match. Try again."
 EMAIL_ALREADY_TAKEN_CONTACT_ADMIN_FOR_HELP = """This E-mail is already registered. 
